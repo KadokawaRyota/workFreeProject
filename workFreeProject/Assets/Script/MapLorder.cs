@@ -32,15 +32,21 @@ public class MapLorder : MonoBehaviour
     public Vector3 goalPosition;    //プレイヤーのゴールポジション
 
     [SerializeField]
-    private GameObject normalBlock; // 通常床のプレハブ.
+    GameObject normalBlock; // 通常床のプレハブ.
     [SerializeField]
-    private GameObject goalBlock;       // ゴール位置のプレハブ.
+    GameObject goalBlock;       // ゴール位置のプレハブ.
     [SerializeField]
-    public GameObject startBlock;      // スタート位置のプレハブ
+    GameObject startBlock;      // スタート位置のプレハブ
+    [SerializeField]
+    GameObject gameOverLine;
+
 
     // Use this for initialization
     void Start()
     {
+        //最後にプレイヤーにスタート地点を送るため、プレイヤーを取得
+        GameObject Player = GameObject.Find("player");
+
         // CSVの中身を入れる as TextAssetはキャストのようなもの
         CsvFile = (Resources.Load(MAP_FILE_NAME)) as TextAsset;
 
@@ -88,6 +94,7 @@ public class MapLorder : MonoBehaviour
                         {
                             //スタート地点ブロックの上を求める.
                             GameObject.Instantiate(startBlock, Pos, Quaternion.identity , StageBlocks.transform);   //スタート地点の生成
+                            Player.GetComponent<playerSetting>().SetPlayer(Pos + new Vector3(0.0f , 1.0f ,0.0f ));
                             break;
                         }
 
@@ -96,7 +103,11 @@ public class MapLorder : MonoBehaviour
                             GameObject.Instantiate(goalBlock, Pos, Quaternion.identity , StageBlocks.transform);  //ゴール地点の生成
                             break;
                         }
-
+                    case "O":   //ゲームオーバーの位置
+                        {
+                            GameObject.Instantiate(gameOverLine, Pos, Quaternion.identity, StageBlocks.transform);  //ゴール地点の生成
+                            break;
+                        }
                     default:
                         {
                             break;
