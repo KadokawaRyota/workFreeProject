@@ -75,7 +75,81 @@ ModelImporter:
     animationScaleError: 0.5
     animationWrapMode: 0
     extraExposedTransformPaths: []
-    clipAnimations: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: Take 001
+      takeName: Take 001
+      firstFrame: 0
+      lastFrame: 20
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: grp_tanuki_bone
+        weight: 1
+      - path: grp_tanuki_bone/root
+        weight: 1
+      - path: grp_tanuki_bone/root/chest
+        weight: 1
+      - path: grp_tanuki_bone/root/chest/L_shoulder
+        weight: 1
+      - path: grp_tanuki_bone/root/chest/L_shoulder/L_elbow
+        weight: 1
+      - path: grp_tanuki_bone/root/chest/L_shoulder/L_elbow/L_wrist
+        weight: 1
+      - path: grp_tanuki_bone/root/chest/L_shoulder/L_elbow/L_wrist/L_hand
+        weight: 1
+      - path: grp_tanuki_bone/root/chest/neck
+        weight: 1
+      - path: grp_tanuki_bone/root/chest/neck/head
+        weight: 1
+      - path: grp_tanuki_bone/root/chest/R_shoulder
+        weight: 1
+      - path: grp_tanuki_bone/root/chest/R_shoulder/R_elbow
+        weight: 1
+      - path: grp_tanuki_bone/root/chest/R_shoulder/R_elbow/R_wrist
+        weight: 1
+      - path: grp_tanuki_bone/root/chest/R_shoulder/R_elbow/R_wrist/R_hand
+        weight: 1
+      - path: grp_tanuki_bone/root/L_thigh
+        weight: 1
+      - path: grp_tanuki_bone/root/L_thigh/L_knee
+        weight: 1
+      - path: grp_tanuki_bone/root/L_thigh/L_knee/L_foot
+        weight: 1
+      - path: grp_tanuki_bone/root/R_thigh
+        weight: 1
+      - path: grp_tanuki_bone/root/R_thigh/R_knee
+        weight: 1
+      - path: grp_tanuki_bone/root/R_thigh/R_knee/R_foot
+        weight: 1
+      - path: grp_tanuki_bone/root/tail1
+        weight: 1
+      - path: grp_tanuki_bone/root/tail1/tail2
+        weight: 1
+      - path: grp_tanuki_bone/root/tail1/tail2/tail3
+        weight: 1
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
     isReadable: 1
   meshes:
     lODScreenPercentages: []

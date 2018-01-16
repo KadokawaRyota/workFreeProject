@@ -48,6 +48,7 @@ public class playerController : MonoBehaviour {
                 {
                     time = 0;
                     state = PLAYER_STATE.RUN;
+                        GetComponent<Animator>().SetBool("bRun",true);
                 }
                 break;
             }
