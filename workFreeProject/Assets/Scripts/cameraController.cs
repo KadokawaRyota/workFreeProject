@@ -12,7 +12,7 @@ public class cameraController : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        posRobject = GameObject.Find("player");
+        posRobject = GameObject.Find("player/cameraR");
     }
 	
 	// Update is called once per frame

@@ -10,6 +10,9 @@ using UnityEngine;
 public class playerController : MonoBehaviour {
 
     [SerializeField]
+    GameObject punipuniCon;
+
+    [SerializeField]
     GameObject camera;
 
     public enum PLAYER_STATE{
@@ -20,16 +23,32 @@ public class playerController : MonoBehaviour {
 
     [SerializeField]
     float startWaitTime;    //スタートするまでの時間
-    float time;             //時間カウント用
-
+    [SerializeField]
     float speed = 1.5f;        //(秒速)
+    [SerializeField]
+    float speedMin = 1.0f;
+    float speedMAX = 3.0f;
 
+    [SerializeField]
+    float fJumpPower;
+
+    Collider groundChecker;
+
+    float time;             //時間カウント用
+    bool bJump = false;
+
+    bool bDoubleJump = false;
+
+    Vector3 velocity;       //プレイヤーの移動量
     PLAYER_STATE state;     //プレイヤーの状態遷移
 
     // Use this for initialization
     void Start () {
+        velocity = Vector3.zero;
         time = 0;
         state = PLAYER_STATE.STOP;
+        bJump = false;
+        bDoubleJump = false;
 
         //カメラの更新
         camera.GetComponent<cameraController>().SetCamera();
@@ -48,12 +67,14 @@ public class playerController : MonoBehaviour {
                 {
                     time = 0;
                     state = PLAYER_STATE.RUN;
-                        GetComponent<Animator>().SetBool("bRun",true);
+                    GetComponent<Animator>().SetBool("bRun",true);
                 }
                 break;
             }
             case (PLAYER_STATE.RUN):
             {
+                //横の移動量決定
+                velocity = new Vector3(speed / 60 * 4, velocity.y, 0);
                 break;
             }
             default:
@@ -64,7 +85,7 @@ public class playerController : MonoBehaviour {
 	}
     void FixedUpdate()
     {
-        		switch(state)
+        switch(state)
         {
             case (PLAYER_STATE.STOP):
             {
@@ -72,7 +93,7 @@ public class playerController : MonoBehaviour {
             }
             case (PLAYER_STATE.RUN):
             {
-                transform.position += new Vector3(speed / 60 * 4 , 0, 0);
+                transform.position += velocity;
                 break;
             }
             default:
@@ -83,5 +104,36 @@ public class playerController : MonoBehaviour {
 
         //カメラの更新
         camera.GetComponent<cameraController>().SetCamera();
+    }
+
+    public void playerJump( bool jump )
+    {
+        //ジャンプしてる時にジャンプ呼ばれたり、ジャンプしてない時にジャンプしてない状態に変えても意味ないので、制御用
+        if (bJump != jump)
+        {
+            bJump = jump;
+            //着地処理の時だけ二段ジャンプをfalseに。
+            if( !jump )
+            bDoubleJump = false;
+        }
+        //二段ジャンプ（ジャンプ中にジャンプ処理が呼ばれた。かつまだ二段ジャンプしていない）
+        else if (bJump && jump && bDoubleJump == false)
+        {
+            bDoubleJump = true;
+            GetComponent<Rigidbody>().velocity = Vector3.zero;
+            GetComponent<Rigidbody>().AddForce(new Vector3(0.0f, fJumpPower, 0.0f), ForceMode.Impulse);
+            return;
+        }
+        else
+        {
+            return;
+        }
+
+        //ジャンプ処理。
+        if ( bJump )
+        {
+            if( state == PLAYER_STATE.RUN )
+            GetComponent<Rigidbody>().AddForce(new Vector3(0.0f, fJumpPower, 0.0f), ForceMode.Impulse);
+        }
     }
 }
