@@ -137,6 +137,14 @@ public class Scr_ControllerManager : MonoBehaviour
     {
         return tTouchInfo.position;
     }
+
+    //--------------------------------------------------------------------------
+    //          ぷにコンの長さを取得
+    //--------------------------------------------------------------------------
+    public Vector3 GetControllerVec()
+    {
+        return ControllerVec;
+    }
 }
 
 

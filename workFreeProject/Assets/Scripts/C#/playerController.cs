@@ -10,7 +10,7 @@ using UnityEngine;
 public class playerController : MonoBehaviour {
 
     [SerializeField]
-    GameObject punipuniCon;
+    GameObject Scr_ControllerManager;
 
     [SerializeField]
     GameObject camera;
@@ -42,6 +42,10 @@ public class playerController : MonoBehaviour {
     Vector3 velocity;       //プレイヤーの移動量
     PLAYER_STATE state;     //プレイヤーの状態遷移
 
+    Vector3 oldPosition;
+
+    bool bHitWall = false;
+
     // Use this for initialization
     void Start () {
         velocity = Vector3.zero;
@@ -49,9 +53,14 @@ public class playerController : MonoBehaviour {
         state = PLAYER_STATE.STOP;
         bJump = false;
         bDoubleJump = false;
+        bHitWall = false;
 
         //カメラの更新
         camera.GetComponent<cameraController>().SetCamera();
+
+        //ぷにコンの長さを取得するため、コントローラーマネージャ取得
+        Scr_ControllerManager = GameObject.Find("PuniconCamera/ControllerManager");
+
     }
 	
 	// Update is called once per frame
@@ -73,8 +82,16 @@ public class playerController : MonoBehaviour {
             }
             case (PLAYER_STATE.RUN):
             {
+                //スピードの変更
+                changeAccel();
                 //横の移動量決定
                 velocity = new Vector3(speed / 60 * 4, velocity.y, 0);
+
+                //壁に当たってる間は止まる。
+                if( bHitWall )
+                {
+                    velocity.x = 0.0f;
+                }
                 break;
             }
             default:
@@ -94,6 +111,7 @@ public class playerController : MonoBehaviour {
             case (PLAYER_STATE.RUN):
             {
                 transform.position += velocity;
+                oldPosition = transform.position;
                 break;
             }
             default:
@@ -119,6 +137,7 @@ public class playerController : MonoBehaviour {
         //二段ジャンプ（ジャンプ中にジャンプ処理が呼ばれた。かつまだ二段ジャンプしていない）
         else if (bJump && jump && bDoubleJump == false)
         {
+            GetComponent<playerController>().HitWall(false);
             bDoubleJump = true;
             GetComponent<Rigidbody>().velocity = Vector3.zero;
             GetComponent<Rigidbody>().AddForce(new Vector3(0.0f, fJumpPower, 0.0f), ForceMode.Impulse);
@@ -132,8 +151,32 @@ public class playerController : MonoBehaviour {
         //ジャンプ処理。
         if ( bJump )
         {
-            if( state == PLAYER_STATE.RUN )
+            GetComponent<playerController>().HitWall(false);
+            if ( state == PLAYER_STATE.RUN )
             GetComponent<Rigidbody>().AddForce(new Vector3(0.0f, fJumpPower, 0.0f), ForceMode.Impulse);
         }
+    }
+
+    public void changeAccel()
+    {
+        Vector3 length = Scr_ControllerManager.GetComponent<Scr_ControllerManager>().GetControllerVec();
+
+        if(length.x > 0)
+        {
+            speed += 0.08f;
+            if( speed >= 3.0f)
+            {
+                speed = 3.0f;
+            }
+            else if( speed <= 1.5f )
+            {
+                speed = 1.5f;
+            }
+        }
+    }
+
+    public void HitWall( bool hitWall )
+    {
+        bHitWall = hitWall;
     }
 }
