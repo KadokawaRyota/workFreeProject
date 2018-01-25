@@ -39,7 +39,8 @@ public class MapLorder : MonoBehaviour
     GameObject startBlock;      // スタート位置のプレハブ
     [SerializeField]
     GameObject gameOverLine;
-
+    [SerializeField]
+    GameObject AirBlock;
 
     // Use this for initialization
     void Start()
@@ -106,6 +107,12 @@ public class MapLorder : MonoBehaviour
                     case "O":   //ゲームオーバーの位置
                         {
                             GameObject.Instantiate(gameOverLine, Pos, Quaternion.identity, StageBlocks.transform);  //ゴール地点の生成
+                            break;
+                        }
+                    case "A":   //空中ブロック
+                        {
+                            Pos.y += 0.4f;
+                            GameObject.Instantiate(AirBlock, Pos, Quaternion.identity, StageBlocks.transform);  //ゴール地点の生成
                             break;
                         }
                     default:

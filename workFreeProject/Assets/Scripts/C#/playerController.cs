@@ -91,6 +91,13 @@ public class playerController : MonoBehaviour {
                 if( bHitWall )
                 {
                     velocity.x = 0.0f;
+                    time += Time.deltaTime;
+                    if( time > 1 )
+                    {
+                        time = 0;
+                        speed = speedMin;
+                        bHitWall = false;
+                    }
                 }
                 break;
             }
@@ -127,17 +134,17 @@ public class playerController : MonoBehaviour {
     public void playerJump( bool jump )
     {
         //ジャンプしてる時にジャンプ呼ばれたり、ジャンプしてない時にジャンプしてない状態に変えても意味ないので、制御用
-        if (bJump != jump)
+        if (bJump != jump && !bHitWall && state == PLAYER_STATE.RUN && !bHitWall )
         {
             bJump = jump;
+            gameObject.layer = LayerMask.NameToLayer("JumpPlayer");
             //着地処理の時だけ二段ジャンプをfalseに。
-            if( !jump )
+            if ( !jump )
             bDoubleJump = false;
         }
         //二段ジャンプ（ジャンプ中にジャンプ処理が呼ばれた。かつまだ二段ジャンプしていない）
-        else if (bJump && jump && bDoubleJump == false)
+        else if (bJump && jump && bDoubleJump == false && !bHitWall )
         {
-            GetComponent<playerController>().HitWall(false);
             bDoubleJump = true;
             GetComponent<Rigidbody>().velocity = Vector3.zero;
             GetComponent<Rigidbody>().AddForce(new Vector3(0.0f, fJumpPower, 0.0f), ForceMode.Impulse);
@@ -161,16 +168,52 @@ public class playerController : MonoBehaviour {
     {
         Vector3 length = Scr_ControllerManager.GetComponent<Scr_ControllerManager>().GetControllerVec();
 
-        if(length.x > 0)
+        //コントローラーの長さ
+        if(length.x > 0 && length.x <= 300 )
         {
-            speed += 0.08f;
-            if( speed >= 3.0f)
+            //キャラクターのスピードが一定以下
+            if(speed < speedMin)
             {
-                speed = 3.0f;
+                //処理無し
             }
-            else if( speed <= 1.5f )
+            else if( speed > speedMin )
             {
-                speed = 1.5f;
+                speed -= 0.01f;
+                if( speed < speedMin )
+                {
+                    speed = speedMin;
+                }
+            }
+        }
+        //コントローラの長さ
+        else if( length.x > 300 && length.x <= 600 )
+        {
+            if ( speed < 2.0)
+            {
+                speed += 0.01f;
+                if (speed > 2.0)
+                {
+                    speed = 2.0f;
+                }
+            }
+            else if (speed > 2.0)
+            {
+                speed -= 0.04f;
+                if (speed < 1.0)
+                {
+                    speed = 1.0f;
+                }
+            }
+        }
+        else if (length.x > 600 )
+        {
+            if (speed < 3.0)
+            {
+                speed += 0.04f;
+                if (speed > 3.0)
+                {
+                    speed = 3.0f;
+                }
             }
         }
     }

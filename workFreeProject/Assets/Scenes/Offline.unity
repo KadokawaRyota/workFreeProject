@@ -473,6 +473,10 @@ Prefab:
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: ff98e1145af081d4cb253eb21c3f7f74, type: 2}
+    - target: {fileID: 100094, guid: 456637178bcd2d64caaad88810d5e9a6, type: 3}
+      propertyPath: m_TagString
+      value: Player
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 456637178bcd2d64caaad88810d5e9a6, type: 3}
   m_IsPrefabParent: 0
@@ -839,7 +843,7 @@ MonoBehaviour:
   startWaitTime: 2
   speed: 1.5
   speedMin: 1
-  fJumpPower: 200
+  fJumpPower: 250
 --- !u!114 &1749473660
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1009,6 +1013,7 @@ MonoBehaviour:
   startBlock: {fileID: 1427038391831872, guid: bc291cbb7e96d994487de9a2f1017481, type: 2}
   gameOverLine: {fileID: 1155860812865968, guid: eb220ecd241fee742a4e87c59ab4c78b,
     type: 2}
+  AirBlock: {fileID: 1174237765463440, guid: ea3ce6434b725e642bcf23a686a566c7, type: 2}
 --- !u!4 &1933087569
 Transform:
   m_ObjectHideFlags: 0

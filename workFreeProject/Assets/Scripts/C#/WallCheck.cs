@@ -19,6 +19,7 @@ public class WallCheck : MonoBehaviour {
         if( col.tag == "Block" )
         {
             transform.parent.GetComponent<playerController>().HitWall(true);
+            transform.parent.GetComponent<Rigidbody>().AddForce(-300.0f, 0.0f, 0.0f, ForceMode.Impulse);
         }
     }
     void OnTriggerExit(Collider col)
