@@ -9,7 +9,6 @@ using UnityEngine;
 
 public class playerController : MonoBehaviour {
 
-    [SerializeField]
     GameObject Scr_ControllerManager;
 
     [SerializeField]
@@ -46,6 +45,8 @@ public class playerController : MonoBehaviour {
 
     bool bHitWall = false;
 
+    GameObject Score;
+
     // Use this for initialization
     void Start () {
         velocity = Vector3.zero;
@@ -61,6 +62,7 @@ public class playerController : MonoBehaviour {
         //ぷにコンの長さを取得するため、コントローラーマネージャ取得
         Scr_ControllerManager = GameObject.Find("PuniconCamera/ControllerManager");
 
+        Score = GameObject.Find("ScoreManager");
     }
 	
 	// Update is called once per frame
@@ -137,7 +139,6 @@ public class playerController : MonoBehaviour {
         if (bJump != jump && !bHitWall && state == PLAYER_STATE.RUN && !bHitWall )
         {
             bJump = jump;
-            gameObject.layer = LayerMask.NameToLayer("JumpPlayer");
             //着地処理の時だけ二段ジャンプをfalseに。
             if ( !jump )
             bDoubleJump = false;
@@ -148,6 +149,7 @@ public class playerController : MonoBehaviour {
             bDoubleJump = true;
             GetComponent<Rigidbody>().velocity = Vector3.zero;
             GetComponent<Rigidbody>().AddForce(new Vector3(0.0f, fJumpPower, 0.0f), ForceMode.Impulse);
+            gameObject.layer = LayerMask.NameToLayer("JumpPlayer");
             return;
         }
         else
@@ -161,6 +163,7 @@ public class playerController : MonoBehaviour {
             GetComponent<playerController>().HitWall(false);
             if ( state == PLAYER_STATE.RUN )
             GetComponent<Rigidbody>().AddForce(new Vector3(0.0f, fJumpPower, 0.0f), ForceMode.Impulse);
+            gameObject.layer = LayerMask.NameToLayer("JumpPlayer");
         }
     }
 
@@ -188,31 +191,31 @@ public class playerController : MonoBehaviour {
         //コントローラの長さ
         else if( length.x > 300 && length.x <= 600 )
         {
-            if ( speed < 2.0)
+            if ( speed < ( speedMAX - speedMin ))
             {
                 speed += 0.01f;
-                if (speed > 2.0)
+                if (speed > (speedMAX - speedMin))
                 {
-                    speed = 2.0f;
+                    speed = (speedMAX - speedMin);
                 }
             }
             else if (speed > 2.0)
             {
                 speed -= 0.04f;
-                if (speed < 1.0)
+                if (speed < speedMin)
                 {
-                    speed = 1.0f;
+                    speed = speedMin;
                 }
             }
         }
         else if (length.x > 600 )
         {
-            if (speed < 3.0)
+            if (speed < speedMAX)
             {
                 speed += 0.04f;
-                if (speed > 3.0)
+                if (speed > speedMAX)
                 {
-                    speed = 3.0f;
+                    speed = speedMAX;
                 }
             }
         }
@@ -221,5 +224,21 @@ public class playerController : MonoBehaviour {
     public void HitWall( bool hitWall )
     {
         bHitWall = hitWall;
+    }
+
+    public void HitItem()
+    {
+        Score.GetComponent<Score>().ScoreAdd(100);
+    }
+
+
+    void OnTriggerEnter(Collider col)
+    {
+        if( col.gameObject.tag == "Coin" )
+        {
+            col.gameObject.GetComponent<SphereCollider>().enabled = false;
+            Destroy(col.gameObject);
+            HitItem();
+        }
     }
 }

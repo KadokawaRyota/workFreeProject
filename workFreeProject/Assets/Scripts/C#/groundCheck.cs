@@ -19,7 +19,7 @@ public class groundCheck : MonoBehaviour {
         if( col.gameObject.name == "normalBlock(Clone)" || col.gameObject.tag == "AirBlock")
 
         //下降してる時のみ
-        if(transform.parent.gameObject.GetComponent<Rigidbody>().velocity.y < 0 )
+        if(transform.parent.gameObject.GetComponent<Rigidbody>().velocity.y < 0 || col.gameObject.name == "normalBlock(Clone)" )
         {
             transform.parent.GetComponent<playerController>().playerJump(false);
             transform.parent.gameObject.layer = LayerMask.NameToLayer("Player");

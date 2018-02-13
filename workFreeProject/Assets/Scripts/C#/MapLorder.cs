@@ -41,6 +41,8 @@ public class MapLorder : MonoBehaviour
     GameObject gameOverLine;
     [SerializeField]
     GameObject AirBlock;
+    [SerializeField]
+    GameObject Coin;
 
     // Use this for initialization
     void Start()
@@ -112,7 +114,12 @@ public class MapLorder : MonoBehaviour
                     case "A":   //空中ブロック
                         {
                             Pos.y += 0.4f;
-                            GameObject.Instantiate(AirBlock, Pos, Quaternion.identity, StageBlocks.transform);  //ゴール地点の生成
+                            GameObject.Instantiate(AirBlock, Pos, Quaternion.identity, StageBlocks.transform);  //空中ブロックの生成
+                            break;
+                        }
+                    case "C":   //コイン
+                        {
+                            GameObject.Instantiate(Coin, Pos, Quaternion.identity, StageBlocks.transform);  //コインの生成
                             break;
                         }
                     default:

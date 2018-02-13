@@ -153,7 +153,10 @@ public class PunipuniController : MonoBehaviour
                 if (Scr_ControllerManager.tTouchInfo.phase == TouchPhase.Began) BeginPunipuni();      // タップされた瞬間
                 if (Scr_ControllerManager.tTouchInfo.phase == TouchPhase.Moved ||
                     Scr_ControllerManager.tTouchInfo.phase == TouchPhase.Stationary) TrackingPunipuni();   // タップをキープしている状態 
-                if (Scr_ControllerManager.tTouchInfo.phase == TouchPhase.Ended) EndPunipuni();        // タップを解除した瞬間
+                if (Scr_ControllerManager.tTouchInfo.phase == TouchPhase.Ended)
+                {
+                    EndPunipuni();        // タップを解除した瞬間
+                }
             }
         }
     
@@ -231,24 +234,35 @@ public class PunipuniController : MonoBehaviour
                 tapeffect.SetEffectType(EFFECT_TYPE.TAP);                     // エフェクトタイプセット
                 tapeffect.EffectFlug = true;                                  // エフェクト更新フラグON
             }
+        ////    ベジェ曲線とぷニコンメッシュのリセット
+            ////////////////////////////////////////////////////////////////////
+            ResetPuniMeshAndBezier();
 
-            ////   タップされていた時間が一定以上だった時の処理
-            ////////////////////////////////////////////////////////////////////     
-            if (Input.touchCount == 0)
+            ////    エフェクトOFF
+            ////////////////////////////////////////////////////////////////
+            if (tapeffect.Effecttype == EFFECT_TYPE.HOLD)
             {
-                ////    ベジェ曲線とぷニコンメッシュのリセット
-                ////////////////////////////////////////////////////////////////////
-                ResetPuniMeshAndBezier();
-
-                ////    エフェクトOFF
-                ////////////////////////////////////////////////////////////////
-                if (tapeffect.Effecttype == EFFECT_TYPE.HOLD)
-                {
-                    SpriteRenderHE2D.enabled = false;   // ホールドエフェクトOFF
-                    tapeffect.EffectStatusReset();      // ステータスリセット
-                }       
+                SpriteRenderHE2D.enabled = false;   // ホールドエフェクトOFF
+                tapeffect.EffectStatusReset();      // ステータスリセット
             }
-        }
+
+        ////   タップされていた時間が一定以上だった時の処理
+        ////////////////////////////////////////////////////////////////////     
+        /*            if (Input.touchCount == 0)
+                    {
+                        ////    ベジェ曲線とぷニコンメッシュのリセット
+                        ////////////////////////////////////////////////////////////////////
+                        ResetPuniMeshAndBezier();
+
+                        ////    エフェクトOFF
+                        ////////////////////////////////////////////////////////////////
+                        if (tapeffect.Effecttype == EFFECT_TYPE.HOLD)
+                        {
+                            SpriteRenderHE2D.enabled = false;   // ホールドエフェクトOFF
+                            tapeffect.EffectStatusReset();      // ステータスリセット
+                        }       
+                    }*/
+    }
 
     //--------------------------------------------------------------------------
     //          ぷにぷにコントローラーの追跡処理
