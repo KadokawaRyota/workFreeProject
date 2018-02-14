@@ -12,7 +12,6 @@ public class cameraController : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        posRobject = GameObject.Find("player/cameraR");
     }
 	
 	// Update is called once per frame
@@ -21,6 +20,7 @@ public class cameraController : MonoBehaviour {
 
     public void SetCamera()
     {
+        posRobject = GameObject.Find("player/cameraR");
         //注視点を入れる
         transform.LookAt(posRobject.transform.position);
         //カメラのポジションを入れる。

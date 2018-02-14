@@ -56,7 +56,6 @@ public class NetworkManagerScript : NetworkBehaviour
     //オンラインセットアップ関数
     void OnlineSetup()
     {
-
         //PCアプリケーション起動時処理
         if (Application.platform == RuntimePlatform.WindowsEditor || Application.platform == RuntimePlatform.WindowsPlayer)
         {
@@ -65,7 +64,7 @@ public class NetworkManagerScript : NetworkBehaviour
                 manager.networkAddress = "localhost";       //ホストの時はlocalhost
                 manager.StartHost();                        //ホスト処理開始
                 Debug.Log("Start as Server");
-                punioconCamera.SetActive(false);
+                punioconCamera.SetActive(true);
 
             }
 

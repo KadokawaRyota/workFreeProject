@@ -18,8 +18,6 @@ public class MapLorder : MonoBehaviour
     private const string MAP_FILE_NAME = "CSV/Stage001";    //ファイル名
 
 
-
-
     private TextAsset CsvFile = null;  //空のCSVファイルを入れる箱
 
     //ブロックの幅
@@ -44,11 +42,20 @@ public class MapLorder : MonoBehaviour
     [SerializeField]
     GameObject Coin;
 
+    GameObject Player = null;
+    bool SetPlayer = false;
+
     // Use this for initialization
     void Start()
     {
-        //最後にプレイヤーにスタート地点を送るため、プレイヤーを取得
-        GameObject Player = GameObject.Find("player");
+        //最後にプレイヤーにスタート地点を送るため、プレイヤーを取得(オンライン時はここはエラーを吐く。)
+        if (Player == null)
+        {
+            Player = GameObject.Find("player");
+        }
+
+        //ネットワーク上ではプレイヤーが生成されてなければ取得出来ないので、処理を抜ける。若しくは、スタートがSetPlayer上で呼び出されている。場合
+        if (Player == null || SetPlayer ) return;
 
         // CSVの中身を入れる as TextAssetはキャストのようなもの
         CsvFile = (Resources.Load(MAP_FILE_NAME)) as TextAsset;
@@ -131,4 +138,19 @@ public class MapLorder : MonoBehaviour
             lineCount++;//行加算
         }
     }
+    /***************
+    *ネットワーク用*
+    ***************/
+
+    //呼び出し元、networkPlayer;
+    public void SetNetworkPlayer(GameObject sPlayer)
+    {
+        //プレイヤーをセット
+        Player = sPlayer;
+        //スタート呼び出し
+        Start();
+        //スタート二重で入るのを制限。
+        SetPlayer = true;
+    }
+    
 }

@@ -1,20 +1,24 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
+using UnityEngine.UI;
 
 //スケールのサイズ1を1mとして扱う。
 //成人男性の歩幅が75cm、2歩で約1秒なのでspeedの変数は1.5m/sを基準とする。(歩行)走る速度は約4倍になるそうなので4をかける。
 //speedを扱う際にfpsで割ること。
 
 
-public class playerController : MonoBehaviour {
+public class networkPlayerController : NetworkBehaviour
+{
 
     GameObject Scr_ControllerManager;
 
     [SerializeField]
     GameObject camera;
 
-    public enum PLAYER_STATE{
+    public enum PLAYER_STATE
+    {
         STOP = 0,
         RUN,
         MAX,
@@ -47,8 +51,20 @@ public class playerController : MonoBehaviour {
 
     GameObject Score;
 
+    GameObject Timer;
+    HostTimer hostTimerScript;
+
     // Use this for initialization
-    void Start () {
+    void Start()
+    {
+        if (!isLocalPlayer) return;
+        //ネットワーク上では、プレイヤーが生成されてからステージを作ったりするため。色々設定～。
+
+        this.name = ("player");
+
+        Timer = GameObject.Find("HostTimer");
+        hostTimerScript = Timer.GetComponent<HostTimer>();
+
         velocity = Vector3.zero;
         time = 0;
         state = PLAYER_STATE.STOP;
@@ -63,89 +79,104 @@ public class playerController : MonoBehaviour {
         //ぷにコンの長さを取得するため、コントローラーマネージャ取得
         Scr_ControllerManager = GameObject.Find("PuniconCamera/ControllerManager");
 
+        //ステージ生成。
+        MapLorder mapLorderScript = GameObject.Find("StageEditor").GetComponent<MapLorder>();
+        mapLorderScript.SetNetworkPlayer(this.gameObject);
+
+
         Score = GameObject.Find("ScoreManager");
+
+        //ボタンに自分自身のジャンプを割り当てる。
+        GameObject jumpButton = GameObject.Find("Canvas/JumpButton");
+        Button button = jumpButton.gameObject.GetComponent<Button>();
+        button.onClick.AddListener(  () => playerJump(true)  );
     }
-	
-	// Update is called once per frame
-	void Update () {
-		switch(state)
+    // Update is called once per frame
+    void Update()
+    {
+        if (!isLocalPlayer) return;
+
+        switch (state)
         {
             case (PLAYER_STATE.STOP):
-            {
-                //スタートするまでの待機
-                time += Time.deltaTime;
-                //スタート時間になったので状態を走る状態にする。
-                if( time >= startWaitTime )
                 {
-                    time = 0;
-                    state = PLAYER_STATE.RUN;
-                    GetComponent<Animator>().SetBool("bRun",true);
-                }
-                break;
-            }
-            case (PLAYER_STATE.RUN):
-            {
-                //スピードの変更
-                changeAccel();
-                //横の移動量決定
-                velocity = new Vector3(speed / 60 * 4, velocity.y, 0);
-
-                //壁に当たってる間は止まる。
-                if( bHitWall )
-                {
-                    velocity.x = 0.0f;
-                    time += Time.deltaTime;
-                    if( time > 1 )
+                    //スタート時間になったので状態を走る状態にする。
+                    if (hostTimerScript.GetTime() >= startWaitTime)
                     {
                         time = 0;
-                        speed = speedMin;
-                        bHitWall = false;
+                        state = PLAYER_STATE.RUN;
+                        GetComponent<Animator>().SetBool("bRun", true);
                     }
+                    break;
                 }
-                break;
-            }
+            case (PLAYER_STATE.RUN):
+                {
+                    //スピードの変更
+                    changeAccel();
+                    //横の移動量決定
+                    velocity = new Vector3(speed / 60 * 4, velocity.y, 0);
+
+                    //壁に当たってる間は止まる。
+                    if (bHitWall)
+                    {
+                        velocity.x = 0.0f;
+                        time += Time.deltaTime;
+                        if (time > 1)
+                        {
+                            time = 0;
+                            speed = speedMin;
+                            bHitWall = false;
+                        }
+                    }
+                    break;
+                }
             default:
-            {
-                break;
-            }
+                {
+                    break;
+                }
         }
-	}
+    }
     void FixedUpdate()
     {
-        switch(state)
+        if (!isLocalPlayer) return;
+
+        switch (state)
         {
             case (PLAYER_STATE.STOP):
-            {
-                break;
-            }
+                {
+                    break;
+                }
             case (PLAYER_STATE.RUN):
-            {
-                transform.position += velocity;
-                oldPosition = transform.position;
-                break;
-            }
+                {
+                    transform.position += velocity;
+                    oldPosition = transform.position;
+                    break;
+                }
             default:
-            {
-                break;
-            }
+                {
+                    break;
+                }
         }
 
         //カメラの更新
         camera.GetComponent<cameraController>().SetCamera();
     }
 
-    public void playerJump( bool jump )
+    public void playerJump(bool jump)
     {
+        //操作できるプレイヤーじゃなければジャンプ命令を受け付けない。
+        if( !isLocalPlayer) return;
+
         //ジャンプしてる時にジャンプ呼ばれたり、ジャンプしてない時にジャンプしてない状態に変えても意味ないので、制御用
-        if (bJump != jump && !bHitWall && state == PLAYER_STATE.RUN && !bHitWall )
+        if (bJump != jump && !bHitWall && state == PLAYER_STATE.RUN && !bHitWall)
         {
             bJump = jump;
             //着地処理の時だけ二段ジャンプをfalseに。
-            if ( !jump )
-            bDoubleJump = false;
+            if (!jump)
+                bDoubleJump = false;
         }
         //二段ジャンプ（ジャンプ中にジャンプ処理が呼ばれた。かつまだ二段ジャンプしていない）
-        else if (bJump && jump && bDoubleJump == false && !bHitWall )
+        else if (bJump && jump && bDoubleJump == false && !bHitWall)
         {
             bDoubleJump = true;
             GetComponent<Rigidbody>().velocity = Vector3.zero;
@@ -159,40 +190,43 @@ public class playerController : MonoBehaviour {
         }
 
         //ジャンプ処理。
-        if ( bJump )
+        if (bJump)
         {
-            GetComponent<playerController>().HitWall(false);
-            if ( state == PLAYER_STATE.RUN )
-            GetComponent<Rigidbody>().AddForce(new Vector3(0.0f, fJumpPower, 0.0f), ForceMode.Impulse);
+            GetComponent<networkPlayerController>().HitWall(false);
+            if (state == PLAYER_STATE.RUN)
+                GetComponent<Rigidbody>().AddForce(new Vector3(0.0f, fJumpPower, 0.0f), ForceMode.Impulse);
             gameObject.layer = LayerMask.NameToLayer("JumpPlayer");
         }
     }
 
     public void changeAccel()
     {
+        //操作できるプレイヤーじゃなければ速度調整命令を受け付けない
+        if (!isLocalPlayer) return;
+
         Vector3 length = Scr_ControllerManager.GetComponent<Scr_ControllerManager>().GetControllerVec();
 
         //コントローラーの長さ
-        if(length.x > 0 && length.x <= 300 )
+        if (length.x > 0 && length.x <= 300)
         {
             //キャラクターのスピードが一定以下
-            if(speed < speedMin)
+            if (speed < speedMin)
             {
                 //処理無し
             }
-            else if( speed > speedMin )
+            else if (speed > speedMin)
             {
                 speed -= 0.01f;
-                if( speed < speedMin )
+                if (speed < speedMin)
                 {
                     speed = speedMin;
                 }
             }
         }
         //コントローラの長さ
-        else if( length.x > 300 && length.x <= 600 )
+        else if (length.x > 300 && length.x <= 600)
         {
-            if ( speed < ( speedMAX - speedMin ))
+            if (speed < (speedMAX - speedMin))
             {
                 speed += 0.01f;
                 if (speed > (speedMAX - speedMin))
@@ -209,7 +243,7 @@ public class playerController : MonoBehaviour {
                 }
             }
         }
-        else if (length.x > 600 )
+        else if (length.x > 600)
         {
             if (speed < speedMAX)
             {
@@ -222,7 +256,7 @@ public class playerController : MonoBehaviour {
         }
     }
 
-    public void HitWall( bool hitWall )
+    public void HitWall(bool hitWall)
     {
         bHitWall = hitWall;
     }
@@ -235,7 +269,7 @@ public class playerController : MonoBehaviour {
 
     void OnTriggerEnter(Collider col)
     {
-        if( col.gameObject.tag == "Coin" )
+        if (col.gameObject.tag == "Coin")
         {
             col.gameObject.GetComponent<SphereCollider>().enabled = false;
             Destroy(col.gameObject);
