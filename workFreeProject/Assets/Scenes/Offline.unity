@@ -180,6 +180,11 @@ Prefab:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 114283482278531606, guid: 1abf32611d101d34ab5f1ca62f8eed74,
+        type: 2}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 224666481585269860, guid: 1abf32611d101d34ab5f1ca62f8eed74,
         type: 2}
       propertyPath: m_LocalPosition.x
@@ -275,6 +280,31 @@ Prefab:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1749473658}
+    - target: {fileID: 114283482278531606, guid: 1abf32611d101d34ab5f1ca62f8eed74,
+        type: 2}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 114283482278531606, guid: 1abf32611d101d34ab5f1ca62f8eed74,
+        type: 2}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114283482278531606, guid: 1abf32611d101d34ab5f1ca62f8eed74,
+        type: 2}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: playerJump
+      objectReference: {fileID: 0}
+    - target: {fileID: 114283482278531606, guid: 1abf32611d101d34ab5f1ca62f8eed74,
+        type: 2}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 114283482278531606, guid: 1abf32611d101d34ab5f1ca62f8eed74,
+        type: 2}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_BoolArgument
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 1abf32611d101d34ab5f1ca62f8eed74, type: 2}
   m_IsPrefabParent: 0
@@ -473,7 +503,7 @@ Prefab:
     - target: {fileID: 54284745999541082, guid: b72d4a221e2a01b41955b79ce72c6061,
         type: 2}
       propertyPath: m_Constraints
-      value: 126
+      value: 112
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: b72d4a221e2a01b41955b79ce72c6061, type: 2}

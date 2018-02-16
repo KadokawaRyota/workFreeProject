@@ -121,8 +121,6 @@ public class networkPlayerController : NetworkBehaviour
     {
         if (!isLocalPlayer) return;
 
-        Debug.Log("ｼﾞｮｳﾀｲ" + state);
-
         switch (state)
         {
             case (PLAYER_STATE.STOP):
