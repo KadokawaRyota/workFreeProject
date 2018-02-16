@@ -153,6 +153,5 @@ public class NetworkManagerScript : NetworkManager
     public void SetPlayer( GameObject sPlayer )
     {
         player = sPlayer;
-        Debug.Log("player:"+player);
     }
 }

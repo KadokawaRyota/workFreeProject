@@ -24,6 +24,7 @@ public class networkPlayerController : NetworkBehaviour
         MAX,
     };
 
+
     [SerializeField]
     float startWaitTime;    //スタートするまでの時間
     [SerializeField]
@@ -31,6 +32,9 @@ public class networkPlayerController : NetworkBehaviour
     [SerializeField]
     float speedMin = 1.0f;
     float speedMAX = 3.0f;
+
+    public Text speedText; //Text用変数
+
 
     [SerializeField]
     float fJumpPower;
@@ -84,6 +88,10 @@ public class networkPlayerController : NetworkBehaviour
         bDoubleJump = false;
         bHitWall = false;
 
+        //スピードUI
+        speedText = GameObject.Find("Canvas/Speed").GetComponent<Text>();
+        speedText.text = "Speed: 0";
+
         //カメラの更新
         camera = GameObject.Find("Main Camera");
         camera.GetComponent<cameraController>().SetCamera();
@@ -113,6 +121,8 @@ public class networkPlayerController : NetworkBehaviour
     {
         if (!isLocalPlayer) return;
 
+        Debug.Log("ｼﾞｮｳﾀｲ" + state);
+
         switch (state)
         {
             case (PLAYER_STATE.STOP):
@@ -128,9 +138,9 @@ public class networkPlayerController : NetworkBehaviour
                 }
             case (PLAYER_STATE.RUN):
                 {
-                    Debug.Log("二段ジャンプフラグ" + bDoubleJump);
                     //スピードの変更
                     changeAccel();
+
                     //横の移動量決定
                     velocity = new Vector3(speed / 60 * 4, velocity.y, 0);
 
@@ -184,7 +194,7 @@ public class networkPlayerController : NetworkBehaviour
     public void playerJump(bool jump)
     {
         //操作できるプレイヤーじゃなければジャンプ命令を受け付けない。
-        if ( !isLocalPlayer && state == PLAYER_STATE.RUN) return;
+        if ( !isLocalPlayer || state != PLAYER_STATE.RUN) return;
 
         //ジャンプ処理。
         if ( !bJump && jump )
@@ -203,7 +213,6 @@ public class networkPlayerController : NetworkBehaviour
         //ジャンプ中にジャンプ命令が呼ばれた時は二段ジャンプ
         else if( bJump && jump && !bDoubleJump )
         {
-            Debug.Log("二段ジャンプ命令:" + bDoubleJump);
             if( !bDoubleJump )
             {
                 //空中に地面を作ってジャンプする感じにするため、一旦初期化
@@ -288,6 +297,15 @@ public class networkPlayerController : NetworkBehaviour
                 }
             }
         }
+
+        //小数点第3位以下切り捨て
+        speed *= 100;
+        Mathf.Round(speed);
+        speed /= 100;
+
+        //テキストの変更
+        speedText.text = "Speed: " + speed.ToString();
+
     }
 
     public void HitWall(bool hitWall)
