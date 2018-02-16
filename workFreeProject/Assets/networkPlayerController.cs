@@ -55,15 +55,27 @@ public class networkPlayerController : NetworkBehaviour
     HostTimer hostTimerScript;
 
     // Use this for initialization
-    void Start()
+    public void Start()
     {
-        if (!isLocalPlayer) return;
+        if (!isLocalPlayer)
+        {
+            GetComponent<BoxCollider>().enabled = false;
+            return;
+        }
+
         //ネットワーク上では、プレイヤーが生成されてからステージを作ったりするため。色々設定～。
 
+        //名前の変更
         this.name = ("player");
 
+        //ネットワークマネージャーに自分を教える
+        GameObject.Find("NetworkManager").GetComponent<NetworkManagerScript>().SetPlayer(this.gameObject);
+
+        //ネットワーク上で管理するタイマーを取得
         Timer = GameObject.Find("HostTimer");
         hostTimerScript = Timer.GetComponent<HostTimer>();
+        hostTimerScript.Start();
+
 
         velocity = Vector3.zero;
         time = 0;
@@ -72,8 +84,8 @@ public class networkPlayerController : NetworkBehaviour
         bDoubleJump = false;
         bHitWall = false;
 
-        camera = GameObject.Find("Main Camera");
         //カメラの更新
+        camera = GameObject.Find("Main Camera");
         camera.GetComponent<cameraController>().SetCamera();
 
         //ぷにコンの長さを取得するため、コントローラーマネージャ取得
@@ -83,14 +95,19 @@ public class networkPlayerController : NetworkBehaviour
         MapLorder mapLorderScript = GameObject.Find("StageEditor").GetComponent<MapLorder>();
         mapLorderScript.SetNetworkPlayer(this.gameObject);
 
+        //スタート位置に戻す処理などを考えてここで再度配置しておく。
+        transform.position = GetComponent<playerSetting>().GetStartPos();
 
+        //スコアの取得
         Score = GameObject.Find("ScoreManager");
 
         //ボタンに自分自身のジャンプを割り当てる。
         GameObject jumpButton = GameObject.Find("Canvas/JumpButton");
         Button button = jumpButton.gameObject.GetComponent<Button>();
-        button.onClick.AddListener(  () => playerJump(true)  );
+        button.onClick.RemoveAllListeners();
+        button.onClick.AddListener(  () => playerJump(true) );
     }
+
     // Update is called once per frame
     void Update()
     {
@@ -111,6 +128,7 @@ public class networkPlayerController : NetworkBehaviour
                 }
             case (PLAYER_STATE.RUN):
                 {
+                    Debug.Log("二段ジャンプフラグ" + bDoubleJump);
                     //スピードの変更
                     changeAccel();
                     //横の移動量決定
@@ -162,40 +180,56 @@ public class networkPlayerController : NetworkBehaviour
         camera.GetComponent<cameraController>().SetCamera();
     }
 
+    //バグが出たので処理を分けました。
     public void playerJump(bool jump)
     {
         //操作できるプレイヤーじゃなければジャンプ命令を受け付けない。
-        if( !isLocalPlayer) return;
+        if ( !isLocalPlayer && state == PLAYER_STATE.RUN) return;
 
-        //ジャンプしてる時にジャンプ呼ばれたり、ジャンプしてない時にジャンプしてない状態に変えても意味ないので、制御用
-        if (bJump != jump && !bHitWall && state == PLAYER_STATE.RUN && !bHitWall)
+        //ジャンプ処理。
+        if ( !bJump && jump )
         {
-            bJump = jump;
-            //着地処理の時だけ二段ジャンプをfalseに。
-            if (!jump)
-                bDoubleJump = false;
-        }
-        //二段ジャンプ（ジャンプ中にジャンプ処理が呼ばれた。かつまだ二段ジャンプしていない）
-        else if (bJump && jump && bDoubleJump == false && !bHitWall)
-        {
-            bDoubleJump = true;
-            GetComponent<Rigidbody>().velocity = Vector3.zero;
+            GetComponent<networkPlayerController>().HitWall(false);
             GetComponent<Rigidbody>().AddForce(new Vector3(0.0f, fJumpPower, 0.0f), ForceMode.Impulse);
+
+            //ジャンプですり抜けられる壁をすり抜けるため。
             gameObject.layer = LayerMask.NameToLayer("JumpPlayer");
+
+            //ジャンプフラグをtrueに。
+            bJump = true;
+
+            return;
+        }
+        //ジャンプ中にジャンプ命令が呼ばれた時は二段ジャンプ
+        else if( bJump && jump && !bDoubleJump )
+        {
+            Debug.Log("二段ジャンプ命令:" + bDoubleJump);
+            if( !bDoubleJump )
+            {
+                //空中に地面を作ってジャンプする感じにするため、一旦初期化
+                GetComponent<Rigidbody>().velocity = Vector3.zero;
+                GetComponent<Rigidbody>().AddForce(new Vector3(0.0f, fJumpPower, 0.0f), ForceMode.Impulse);
+                gameObject.layer = LayerMask.NameToLayer("JumpPlayer");
+
+                //二段ジャンプフラグをtrueに
+                bDoubleJump = true;
+                return;
+            }
+            else
+            {
+                return;
+            }
+        }
+        //着地処理用。
+        else if( !jump )
+        {
+            bJump = false;
+            bDoubleJump = false;
             return;
         }
         else
         {
             return;
-        }
-
-        //ジャンプ処理。
-        if (bJump)
-        {
-            GetComponent<networkPlayerController>().HitWall(false);
-            if (state == PLAYER_STATE.RUN)
-                GetComponent<Rigidbody>().AddForce(new Vector3(0.0f, fJumpPower, 0.0f), ForceMode.Impulse);
-            gameObject.layer = LayerMask.NameToLayer("JumpPlayer");
         }
     }
 

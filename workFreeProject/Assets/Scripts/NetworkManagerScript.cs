@@ -2,7 +2,7 @@
 using UnityEngine.SceneManagement;
 using UnityEngine.Networking;
 
-public class NetworkManagerScript : NetworkBehaviour
+public class NetworkManagerScript : NetworkManager
 {
 
     NetworkManager manager;
@@ -19,12 +19,15 @@ public class NetworkManagerScript : NetworkBehaviour
 
     public GameObject punioconCamera;       //ぷにコンカメラの取得
 
+    GameObject player = null;
 
     public void Start()
     {
+        player = null;
+
         Debug.Log("Start");
         Debug.Log(SceneManager.GetActiveScene().name);
-        if (SceneManager.GetActiveScene().name == "Main")
+        if (SceneManager.GetActiveScene().name == "Online")
         {
             isOnlinePlay = true;
         }
@@ -86,10 +89,21 @@ public class NetworkManagerScript : NetworkBehaviour
             //仮想コントローラーの実装
             punioconCamera.SetActive(true);
 
-            //アンドロイドでは常にクライアント（ホストにはならない）
-            manager.networkAddress = serverIPAdress;
-            manager.StartClient();
-            Debug.Log("Start as Client");
+            if (isStartAsServer)
+            {
+                manager.networkAddress = serverIPAdress;       //ホストの時はlocalhost
+                manager.StartHost();                        //ホスト処理開始
+                Debug.Log("Start as Server");
+                punioconCamera.SetActive(true);
+
+            }
+            else
+            {
+                manager.networkAddress = serverIPAdress;
+                manager.StartClient();
+                Debug.Log("Start as Client");
+                punioconCamera.SetActive(true);
+            }
         }
     }
 
@@ -120,5 +134,25 @@ public class NetworkManagerScript : NetworkBehaviour
             manager.StartHost();
             Debug.Log("Start as Host");
         }
+    }
+
+
+    //////オーバーライド
+
+    //クライアントが入ってきたら、サーバー側で呼び出される。
+    public override void OnServerConnect(NetworkConnection conn)
+    {
+        if (player == null) return;
+
+        //元のを呼ばないとオーバーライド出来ない。
+        base.OnServerConnect(conn);
+
+        player.GetComponent<networkPlayerController>().Start();
+    }
+
+    public void SetPlayer( GameObject sPlayer )
+    {
+        player = sPlayer;
+        Debug.Log("player:"+player);
     }
 }

@@ -800,7 +800,7 @@ GameObject:
   - component: {fileID: 114605590875941864}
   - component: {fileID: 114002078965242922}
   - component: {fileID: 114603559181255376}
-  m_Layer: 9
+  m_Layer: 10
   m_Name: networkPlayer
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -1748,6 +1748,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f008e47557b67c4a8628264586dc70e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  startPos: {x: 0, y: 0, z: 0}
 --- !u!137 &137031782162976986
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1

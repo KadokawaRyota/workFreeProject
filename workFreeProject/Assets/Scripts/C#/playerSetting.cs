@@ -15,9 +15,17 @@ public class playerSetting : MonoBehaviour {
 		
 	}
 
+    public Vector3 startPos;
+
     //プレイヤーの開始地点を決める
     public void SetPlayer( Vector3 pos )
     {
+        startPos = pos;
         transform.position = pos;
+    }
+
+    public Vector3 GetStartPos()
+    {
+        return startPos;
     }
 }

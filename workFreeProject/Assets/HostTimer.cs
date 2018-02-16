@@ -13,7 +13,7 @@ public class HostTimer : NetworkBehaviour {
     // Use this for initialization
 
     [Client]
-    void Start () {
+    public void Start () {
         timer = 0.0f;
     }
 
