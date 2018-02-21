@@ -693,7 +693,12 @@ Prefab:
     - target: {fileID: 114267250775307962, guid: b050597411786e84baea9733c42fb0d7,
         type: 2}
       propertyPath: serverIPAdress
-      value: 10.11.20.118
+      value: 192.168.13.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 114267250775307962, guid: b050597411786e84baea9733c42fb0d7,
+        type: 2}
+      propertyPath: m_DontDestroyOnLoad
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 114766325729308772, guid: b050597411786e84baea9733c42fb0d7, type: 2}

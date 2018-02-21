@@ -136,6 +136,18 @@ public class NetworkManagerScript : NetworkManager
         }
     }
 
+    public void SetPlayer( GameObject sPlayer )
+    {
+        player = sPlayer;
+    }
+
+    //ネットワーク終了処理
+    public void NetDisconnect()
+    {
+        //manager.StopClient ();
+        Shutdown();
+        //Destroy (this.gameObject);
+    }
 
     //////オーバーライド
 
@@ -150,8 +162,13 @@ public class NetworkManagerScript : NetworkManager
         player.GetComponent<networkPlayerController>().Start();
     }
 
-    public void SetPlayer( GameObject sPlayer )
+    //サーバーが落ちた時
+    //サーバーが切断されたときにクライアント上で呼び出されます。
+    public override void OnClientDisconnect(NetworkConnection conn)
     {
-        player = sPlayer;
+        //元のを呼ばないとオーバーライド出来ない。
+        base.OnClientDisconnect(conn);
+
+        SceneManager.LoadScene("Result");
     }
 }
