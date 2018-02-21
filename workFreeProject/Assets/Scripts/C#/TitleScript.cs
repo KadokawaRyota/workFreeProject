@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 //ipを取得する用。
 using System.Net;
@@ -31,10 +32,19 @@ public class TitleScript : MonoBehaviour
     {
         SceneManager.LoadScene("Offline");
     }
-    public void OnlineSceneChange()
+
+    public void OnlineSceneChangeHost()
     {
+        GameObject.Find("NetworkSetter").GetComponent<NetworkSetter>().NetSettingData( "host" , GameObject.Find("Canvas/InputFieldIp").GetComponent<InputField>().text ,"7777" );
         SceneManager.LoadScene("Online");
     }
+
+    public void OnlineSceneChangeClient()
+    {
+        GameObject.Find("NetworkSetter").GetComponent<NetworkSetter>().NetSettingData( "client" , GameObject.Find("Canvas/InputFieldIp").GetComponent<InputField>().text ,"7777" );
+        SceneManager.LoadScene("Online");
+    }
+
     public string GetIp()
     {
         string ipaddress = "";

@@ -21,6 +21,20 @@ public class NetworkManagerScript : NetworkManager
 
     GameObject player = null;
 
+    void Awake()
+    {
+        serverIPAdress = GameObject.Find("NetworkSetter").GetComponent<NetworkSetter>().GetIpSetting();
+
+        if (GameObject.Find("NetworkSetter").GetComponent<NetworkSetter>().GetState() == "host")
+        {
+            isStartAsServer = true;
+        }
+        else if (GameObject.Find("NetworkSetter").GetComponent<NetworkSetter>().GetState() == "client")
+        {
+            isStartAsServer = false;
+        }
+    }
+
     public void Start()
     {
         player = null;
@@ -98,8 +112,8 @@ public class NetworkManagerScript : NetworkManager
 
             }
             else
-            {
-                manager.networkAddress = serverIPAdress;
+            {               
+                manager.networkAddress = GameObject.Find("NetworkSetter").GetComponent<NetworkSetter>().GetIpSetting();
                 manager.StartClient();
                 Debug.Log("Start as Client");
                 punioconCamera.SetActive(true);

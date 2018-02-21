@@ -12,9 +12,4 @@ public class GetIpStart : MonoBehaviour {
         TitleScript = GameObject.Find("TitleScript");
         GetComponent<InputField>().text = TitleScript.GetComponent<TitleScript>().GetIp();
     }
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
 }
