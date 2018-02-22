@@ -1682,6 +1682,7 @@ MonoBehaviour:
   speed: 1.5
   speedMin: 1
   fJumpPower: 250
+  speedText: {fileID: 0}
 --- !u!114 &114685497522910366
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1693,6 +1694,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f008e47557b67c4a8628264586dc70e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  startPos: {x: 0, y: 0, z: 0}
 --- !u!137 &137010402410719936
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1

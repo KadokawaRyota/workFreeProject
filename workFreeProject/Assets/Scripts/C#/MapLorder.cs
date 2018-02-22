@@ -41,6 +41,8 @@ public class MapLorder : MonoBehaviour
     GameObject AirBlock;
     [SerializeField]
     GameObject Coin;
+    [SerializeField]
+    GameObject Toge;
 
     GameObject Player = null;
     bool SetPlayer = false;
@@ -127,6 +129,11 @@ public class MapLorder : MonoBehaviour
                     case "C":   //コイン
                         {
                             GameObject.Instantiate(Coin, Pos, Quaternion.identity, StageBlocks.transform);  //コインの生成
+                            break;
+                        }
+                    case "T":   //トゲ
+                        {
+                            GameObject.Instantiate(Toge, Pos, Quaternion.identity, StageBlocks.transform);  //トゲの生成
                             break;
                         }
                     default:

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 //スケールのサイズ1を1mとして扱う。
 //成人男性の歩幅が75cm、2歩で約1秒なのでspeedの変数は1.5m/sを基準とする。(歩行)走る速度は約4倍になるそうなので4をかける。
@@ -46,6 +47,8 @@ public class playerController : MonoBehaviour {
     bool bHitWall = false;
 
     GameObject Score;
+
+    public Text speedText; //Text用変数
 
     // Use this for initialization
     void Start () {
@@ -172,54 +175,72 @@ public class playerController : MonoBehaviour {
     {
         Vector3 length = Scr_ControllerManager.GetComponent<Scr_ControllerManager>().GetControllerVec();
 
-        //コントローラーの長さ
-        if(length.x > 0 && length.x <= 300 )
+        if ( length.x > 0 )
         {
-            //キャラクターのスピードが一定以下
-            if(speed < speedMin)
+            speed += 0.04f;
+        }
+        else if ( length.x < 0 )
+        {
+            speed -= 0.04f;
+        }
+
+        ////速度の制御はコントローラの長さ
+        //コントローラーの長さ(増)
+        if (length.x > 0 && length.x < 300 )
+        {
+            //最大速度が2.0
+            if (speed > 2.0 )
             {
-                //処理無し
+                speed = 2.0f;
             }
-            else if( speed > speedMin )
+        }
+        else if (length.x >= 300 && length.x < 600)
+        {
+            //最大速度が3.0
+            if (speed > speedMAX )
             {
-                speed -= 0.01f;
-                if( speed < speedMin )
-                {
-                    speed = speedMin;
-                }
+                speed = speedMAX;
             }
         }
         //コントローラの長さ
-        else if( length.x > 300 && length.x <= 600 )
+        else if ( length.x >= 600 )
         {
-            if ( speed < ( speedMAX - speedMin ))
+            //急加速
+            speed += 0.06f;
+            //最大速度が3.0
+            if (speed > speedMAX)
             {
-                speed += 0.01f;
-                if (speed > (speedMAX - speedMin))
-                {
-                    speed = (speedMAX - speedMin);
-                }
-            }
-            else if (speed > 2.0)
-            {
-                speed -= 0.04f;
-                if (speed < speedMin)
-                {
-                    speed = speedMin;
-                }
+                speed = speedMAX;
             }
         }
-        else if (length.x > 600 )
+        //////コントローラーの長さ(減)
+        if (length.x < 0 && length.x > -600)
         {
-            if (speed < speedMAX)
+            //最低速度が１1.0
+            if (speed < 1.0)
             {
-                speed += 0.04f;
-                if (speed > speedMAX)
-                {
-                    speed = speedMAX;
-                }
+                speed = 1.0f;
             }
         }
+        //コントローラの長さ
+        else if (length.x <= -600)
+        {
+            //急減速
+            speed -= 0.06f;
+            //最低速度が1.0
+            if (speed < 1.0)
+            {
+                speed = 1.0f;
+            }
+        }
+
+        //小数点第3位以下切り捨て
+        speed *= 100;
+        Mathf.Round(speed);
+        speed /= 100;
+
+        //テキストの変更
+        speedText.text = "Speed: " + speed.ToString();
     }
 
     public void HitWall( bool hitWall )

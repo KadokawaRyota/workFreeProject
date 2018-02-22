@@ -980,7 +980,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1195025423}
-        m_MethodName: OnlineSceneChange
+        m_MethodName: OnlineSceneChangeHost
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

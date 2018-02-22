@@ -42,6 +42,10 @@ public class NetworkSetter : MonoBehaviour
     }
     public string GetIpSetting()
     {
+        if( NetworkIp == null )
+        {
+            NetworkIp = "-1";
+        }
         return NetworkIp;
     }
     public string GetState()
