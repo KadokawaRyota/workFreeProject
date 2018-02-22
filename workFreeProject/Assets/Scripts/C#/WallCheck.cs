@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class WallCheck : MonoBehaviour {
 
@@ -16,9 +17,19 @@ public class WallCheck : MonoBehaviour {
 
     void OnTriggerStay(Collider col)
     {
+        if (transform.parent.name != "player") return;
+
         if( col.tag == "Block" )
         {
-            transform.parent.GetComponent<playerController>().HitWall(true);
+            if (SceneManager.GetActiveScene().name == "Online")
+            {
+                transform.parent.GetComponent<networkPlayerController>().HitWall(true);
+            }
+            else if (SceneManager.GetActiveScene().name == "Offline")
+            {
+                transform.parent.GetComponent<playerController>().HitWall(true);
+            }
+
             transform.parent.GetComponent<Rigidbody>().AddForce(-300.0f, 0.0f, 0.0f, ForceMode.Impulse);
         }
     }

@@ -18,6 +18,7 @@ public class playerController : MonoBehaviour {
     public enum PLAYER_STATE{
         STOP = 0,
         RUN,
+        RECOVERY,
         MAX,
     };
 
@@ -49,6 +50,12 @@ public class playerController : MonoBehaviour {
     GameObject Score;
 
     public Text speedText; //Text用変数
+
+    GameObject oldBlock;    //前回のブロック位置
+    GameObject oldBlock2;   //前々回のブロック位置
+
+    float recoveryTime = 0;
+    float RECOVERYTIMERIMIT = 2;
 
     // Use this for initialization
     void Start () {
@@ -125,6 +132,16 @@ public class playerController : MonoBehaviour {
             {
                 transform.position += velocity;
                 oldPosition = transform.position;
+                break;
+            }
+            case (PLAYER_STATE.RECOVERY):
+            {
+                recoveryTime += Time.deltaTime;
+                if(recoveryTime > RECOVERYTIMERIMIT)
+                {
+                    recoveryTime = 0;
+                    state = PLAYER_STATE.RUN;
+                }
                 break;
             }
             default:
@@ -261,6 +278,21 @@ public class playerController : MonoBehaviour {
             col.gameObject.GetComponent<SphereCollider>().enabled = false;
             Destroy(col.gameObject);
             HitItem();
+        }
+        if( col.gameObject.tag == "Block" )
+        {
+            if( col.gameObject.name == "startBlock(Clone)")
+            {
+                oldBlock = col.gameObject;
+            }
+
+            oldBlock2 = oldBlock;
+            oldBlock = col.gameObject;
+        }
+        if( col.gameObject.name == "GameOverLine(Clone)")
+        {
+            state = PLAYER_STATE.RECOVERY;
+            transform.position = new Vector3 ( oldBlock2.transform.position.x , oldBlock2.transform.position.y + 1.0f , oldBlock2.transform.position.z);
         }
     }
 }

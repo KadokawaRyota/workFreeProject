@@ -21,6 +21,7 @@ public class networkPlayerController : NetworkBehaviour
     {
         STOP = 0,
         RUN,
+        RECOVERY,
         MAX,
     };
 
@@ -58,6 +59,14 @@ public class networkPlayerController : NetworkBehaviour
     GameObject Timer;
     HostTimer hostTimerScript;
 
+    GameObject oldBlock;    //前回のブロック位置
+    GameObject oldBlock2;   //前々回のブロック位置
+
+    float recoveryTime = 0;
+    float RECOVERYTIMERIMIT = 2;
+
+    GameObject Player2;
+
     // Use this for initialization
     public void Start()
     {
@@ -66,6 +75,8 @@ public class networkPlayerController : NetworkBehaviour
             GetComponent<BoxCollider>().enabled = false;
             return;
         }
+
+        Player2 = null;
 
         //ネットワーク上では、プレイヤーが生成されてからステージを作ったりするため。色々設定～。
 
@@ -121,6 +132,10 @@ public class networkPlayerController : NetworkBehaviour
     {
         if (!isLocalPlayer) return;
 
+        if( Player2 == null )
+        {
+            Player2 = GameObject.Find("networkPlayer(Clone)");
+        }
         switch (state)
         {
             case (PLAYER_STATE.STOP):
@@ -176,6 +191,16 @@ public class networkPlayerController : NetworkBehaviour
                 {
                     transform.position += velocity;
                     oldPosition = transform.position;
+                    break;
+                }
+            case (PLAYER_STATE.RECOVERY):
+                {
+                    recoveryTime += Time.deltaTime;
+                    if (recoveryTime > RECOVERYTIMERIMIT)
+                    {
+                        recoveryTime = 0;
+                        state = PLAYER_STATE.RUN;
+                    }
                     break;
                 }
             default:
@@ -334,6 +359,21 @@ public class networkPlayerController : NetworkBehaviour
             col.gameObject.GetComponent<SphereCollider>().enabled = false;
             Destroy(col.gameObject);
             HitItem();
+        }
+        if (col.gameObject.tag == "Block")
+        {
+            if (col.gameObject.name == "startBlock(Clone)")
+            {
+                oldBlock = col.gameObject;
+            }
+
+            oldBlock2 = oldBlock;
+            oldBlock = col.gameObject;
+        }
+        if (col.gameObject.name == "GameOverLine(Clone)")
+        {
+            state = PLAYER_STATE.RECOVERY;
+            transform.position = new Vector3(oldBlock2.transform.position.x, oldBlock2.transform.position.y + 1.0f, oldBlock2.transform.position.z);
         }
     }
 }
