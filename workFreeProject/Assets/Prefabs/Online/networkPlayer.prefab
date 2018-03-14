@@ -1662,7 +1662,9 @@ MonoBehaviour:
   speed: 1.5
   speedMin: 1
   speedText: {fileID: 0}
+  rankText: {fileID: 0}
   fJumpPower: 250
+  Distance: 0
 --- !u!114 &114414387792413474
 MonoBehaviour:
   m_ObjectHideFlags: 1

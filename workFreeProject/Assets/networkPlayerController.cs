@@ -36,6 +36,8 @@ public class networkPlayerController : NetworkBehaviour
 
     public Text speedText; //Text用変数
 
+    public Text rankText; //Text用変数
+
 
     [SerializeField]
     float fJumpPower;
@@ -67,6 +69,11 @@ public class networkPlayerController : NetworkBehaviour
 
     GameObject Player2;
 
+    [SerializeField]
+    float Distance = 0.0f;
+
+    int rank = 1;
+
     // Use this for initialization
     public void Start()
     {
@@ -76,7 +83,10 @@ public class networkPlayerController : NetworkBehaviour
             return;
         }
 
+
+        Distance = 0.0f;
         Player2 = null;
+        rank = 1;
 
         //ネットワーク上では、プレイヤーが生成されてからステージを作ったりするため。色々設定～。
 
@@ -102,6 +112,9 @@ public class networkPlayerController : NetworkBehaviour
         //スピードUI
         speedText = GameObject.Find("Canvas/Speed").GetComponent<Text>();
         speedText.text = "Speed: 0";
+
+        //ランクUI
+        rankText = GameObject.Find("Canvas/Rank").GetComponent<Text>();
 
         //カメラの更新
         camera = GameObject.Find("Main Camera");
@@ -132,10 +145,28 @@ public class networkPlayerController : NetworkBehaviour
     {
         if (!isLocalPlayer) return;
 
+        ////順位判定
         if( Player2 == null )
         {
             Player2 = GameObject.Find("networkPlayer(Clone)");
         }
+        else
+        {
+            Distance = transform.position.x - Player2.transform.position.x;
+        }
+
+        if( Distance >= 0 )
+        {
+            rank = 1;
+        }
+        else
+        {
+            rank = 2;
+        }
+
+        rankText.text = rank.ToString() + "位";
+
+
         switch (state)
         {
             case (PLAYER_STATE.STOP):
