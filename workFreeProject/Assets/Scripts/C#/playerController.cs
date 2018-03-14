@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 //スケールのサイズ1を1mとして扱う。
 //成人男性の歩幅が75cm、2歩で約1秒なのでspeedの変数は1.5m/sを基準とする。(歩行)走る速度は約4倍になるそうなので4をかける。
@@ -19,6 +20,7 @@ public class playerController : MonoBehaviour {
         STOP = 0,
         RUN,
         RECOVERY,
+        GOAL,
         MAX,
     };
 
@@ -57,6 +59,8 @@ public class playerController : MonoBehaviour {
     float recoveryTime = 0;
     float RECOVERYTIMERIMIT = 2;
 
+    float resultTimer = 0;
+
     // Use this for initialization
     void Start () {
         velocity = Vector3.zero;
@@ -65,6 +69,8 @@ public class playerController : MonoBehaviour {
         bJump = false;
         bDoubleJump = false;
         bHitWall = false;
+
+        resultTimer = 0;
 
         camera = GameObject.Find("Main Camera");
         //カメラの更新
@@ -142,6 +148,18 @@ public class playerController : MonoBehaviour {
                     recoveryTime = 0;
                     state = PLAYER_STATE.RUN;
                 }
+                break;
+            }
+            case (PLAYER_STATE.GOAL):
+            {
+                GetComponent<Animator>().SetBool("bRun", false);
+                resultTimer += Time.deltaTime;
+
+                if( 3 < resultTimer )
+                {
+                    SceneManager.LoadScene("Result");
+                }
+
                 break;
             }
             default:
@@ -295,4 +313,10 @@ public class playerController : MonoBehaviour {
             transform.position = new Vector3 ( oldBlock2.transform.position.x , oldBlock2.transform.position.y + 1.0f , oldBlock2.transform.position.z);
         }
     }
+
+    public void GoalFlugSwitch()
+    {
+        state = PLAYER_STATE.GOAL;
+    }
+
 }

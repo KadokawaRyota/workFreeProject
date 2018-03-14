@@ -10,7 +10,9 @@ public class GameClear : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-	}
+ //       networkManager = GameObject.Find("NetworkManager");
+ //       networkManager.GetComponent<NetworkManagerScript>().NetDisconnect();
+    }
 	
 	// Update is called once per frame
 	void Update () {
@@ -21,26 +23,7 @@ public class GameClear : MonoBehaviour {
     {
         if (col.tag == "Player")
         {
-            if (SceneManager.GetActiveScene().name == "Online")
-            {
-                networkManager = GameObject.Find("NetworkManager");
-                networkManager.GetComponent<NetworkManagerScript>().NetDisconnect();
-
-                //WIN表示あり
-                if (col.name == "player")
-                {
-                    SceneManager.LoadScene("Result");
-                }
-                else//LOSE表示あり
-                {
-                    SceneManager.LoadScene("Result");
-                }
-            }
-            else if (SceneManager.GetActiveScene().name == "Offline")
-            {
-                //WINもLOSEも表示しない。
-                SceneManager.LoadScene("Result");
-            }
+           col.gameObject.GetComponent<playerController>().GoalFlugSwitch();
         }
     }
 }
