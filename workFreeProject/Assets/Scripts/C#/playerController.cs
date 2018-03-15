@@ -80,6 +80,10 @@ public class playerController : MonoBehaviour {
         Scr_ControllerManager = GameObject.Find("PuniconCamera/ControllerManager");
 
         Score = GameObject.Find("ScoreManager");
+
+        //テキストの変更
+        speedText.text = "Speed: " + speed.ToString();
+
     }
 	
 	// Update is called once per frame
@@ -154,7 +158,15 @@ public class playerController : MonoBehaviour {
             {
                 GetComponent<Animator>().SetBool("bRun", false);
                 resultTimer += Time.deltaTime;
+                
+                //スピードを落とすまで。
+                if( 0.2 > resultTimer )
+                {
+                    transform.position += velocity;
+                    oldPosition = transform.position;
+                }
 
+                //遷移
                 if( 3 < resultTimer )
                 {
                     SceneManager.LoadScene("Result");

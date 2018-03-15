@@ -22,6 +22,7 @@ public class networkPlayerController : NetworkBehaviour
         STOP = 0,
         RUN,
         RECOVERY,
+        GOAL,
         MAX,
     };
 
@@ -74,16 +75,24 @@ public class networkPlayerController : NetworkBehaviour
 
     int rank = 1;
 
+    float resultTimer = 0;
+
+    [SyncVar]
+    bool syncGoal = false;
+
     // Use this for initialization
     public void Start()
     {
         if (!isLocalPlayer)
         {
+            //自分以外のプレイヤーの当たり判定をoff
             GetComponent<BoxCollider>().enabled = false;
+            //名前の変更
+            this.name = ("vsPlayer");
             return;
         }
 
-
+        resultTimer = 0;
         Distance = 0.0f;
         Player2 = null;
         rank = 1;
@@ -155,14 +164,7 @@ public class networkPlayerController : NetworkBehaviour
             Distance = transform.position.x - Player2.transform.position.x;
         }
 
-        if( Distance >= 0 )
-        {
-            rank = 1;
-        }
-        else
-        {
-            rank = 2;
-        }
+
 
         rankText.text = rank.ToString() + "位";
 
@@ -200,6 +202,17 @@ public class networkPlayerController : NetworkBehaviour
                             bHitWall = false;
                         }
                     }
+
+                    //順位判定
+                    if (Distance >= 0)
+                    {
+                        rank = 1;
+                    }
+                    else
+                    {
+                        rank = 2;
+                    }
+
                     break;
                 }
             default:
@@ -232,6 +245,33 @@ public class networkPlayerController : NetworkBehaviour
                         recoveryTime = 0;
                         state = PLAYER_STATE.RUN;
                     }
+                    break;
+                }
+            case (PLAYER_STATE.GOAL):
+                {
+                    GetComponent<Animator>().SetBool("bRun", false);
+                    resultTimer += Time.deltaTime;
+
+                    //順位によってゴールした後に立つ位置を変える。
+                    if (rank == 1)
+                    {
+                        speed = 3.0f;
+                    }
+                    else
+                    {
+                        speed = 1.0f;
+                    }
+
+                    //ゴールした後も少しだけ右へ進む。
+                    //スピードを落とすまで。
+                    if (0.2 > resultTimer)
+                    {
+                        //横の移動量決定
+                        velocity = new Vector3(speed / 60 * 4, velocity.y, 0);
+                        transform.position += velocity;
+                        oldPosition = transform.position;
+                    }
+
                     break;
                 }
             default:
@@ -406,5 +446,62 @@ public class networkPlayerController : NetworkBehaviour
             state = PLAYER_STATE.RECOVERY;
             transform.position = new Vector3(oldBlock2.transform.position.x, oldBlock2.transform.position.y + 1.0f, oldBlock2.transform.position.z);
         }
+    }
+
+    
+    public void GoalFlugSwitch()
+    {
+        //自分の状態をゴールに。
+        state = PLAYER_STATE.GOAL;
+
+        //リザルト遷移の準備
+        GameObject.Find("resultManager").GetComponent<ResultManagerScript>().PlayerGoal( this.gameObject , isServer);
+
+        ////ネットワークでゴールした事を送信(ホストとクライアントで分けているのは仕様上仕方ない。)
+        //クライアントだけでもいいが、途中でホストがネットワークを切った時の事を考えて互いに送信し合うことにした。
+        //クライアント
+        if ( !isServer )
+        {
+            CmdProvideGoalToServer();
+        }
+        //ホスト
+        else
+        {
+            RpcProvidePositionToServer();
+        }
+    }
+
+    //クライアントからホストへ自分がゴールした事を伝える。
+    [Command]
+    void CmdProvideGoalToServer()
+    {
+        syncGoal = true;
+    }
+
+    //ホストからクライアントへ自分がゴールした事を伝える。
+    [ClientRpc]
+    void RpcProvidePositionToServer()
+    {
+        syncGoal = true;
+    }
+
+    public bool GetSyncGoal()
+    {
+        return syncGoal;
+    }
+
+    public int GetRunk()
+    {
+        return rank;
+    }
+
+    public int GetScore()
+    {
+        return Score.GetComponent<Score>().GetScore();
+    }
+
+    public void hostDisconnect()
+    {
+        GameObject.Find("resultManager").GetComponent<ResultManagerScript>().ServerDisconnectPlayerGoal(this.gameObject);
     }
 }

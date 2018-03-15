@@ -82,7 +82,6 @@ public class NetworkManagerScript : NetworkManager
                 manager.StartHost();                        //ホスト処理開始
                 Debug.Log("Start as Server");
                 punioconCamera.SetActive(true);
-
             }
 
             else
@@ -155,7 +154,7 @@ public class NetworkManagerScript : NetworkManager
         player = sPlayer;
     }
 
-    //ネットワーク終了処理
+    ///////ネットワーク終了処理
     public void NetDisconnect()
     {
         //manager.StopClient ();
@@ -183,6 +182,28 @@ public class NetworkManagerScript : NetworkManager
         //元のを呼ばないとオーバーライド出来ない。
         base.OnClientDisconnect(conn);
 
+        GameObject resultManager;    //リザルトに
+
+        resultManager = GameObject.Find("resultManager");
+
+
+        //自身のプレイヤーがゴールしている場合。普通にリザルト画面へ遷移する。
+        if ( resultManager.GetComponent<ResultManagerScript>().GetMyPlayerGoalInfo() != null )
+        {
+            NetDisconnect();
+            SceneManager.LoadScene("Result");
+        }
+        //自身のプレイヤーがゴールしていない場合。ホストが途中で切断されているので1位でゴールしたとして送信し、リザルト画面へ。
+        else
+        {
+            player.GetComponent<networkPlayerController>().hostDisconnect();
+
+            NetDisconnect();
+            SceneManager.LoadScene("Result");
+        }
+
+        Debug.Log("例外の終了条件がクライアント側で実行された。こんな事はありえない。");
+        NetDisconnect();
         SceneManager.LoadScene("Result");
     }
 }

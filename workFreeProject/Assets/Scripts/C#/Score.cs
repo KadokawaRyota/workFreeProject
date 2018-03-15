@@ -45,4 +45,9 @@ public class Score : MonoBehaviour {
     {
         scoreMax += value;
     }
+
+    public int GetScore()
+    {
+        return scoreMax;
+    }
 }

@@ -23,7 +23,14 @@ public class GameClear : MonoBehaviour {
     {
         if (col.tag == "Player")
         {
-           col.gameObject.GetComponent<playerController>().GoalFlugSwitch();
+            if( SceneManager.GetActiveScene().name == "Offline" )
+            {
+               col.gameObject.GetComponent<playerController>().GoalFlugSwitch();
+            }
+            else if (SceneManager.GetActiveScene().name == "Online")
+            {
+                col.gameObject.GetComponent<networkPlayerController>().GoalFlugSwitch();
+            }
         }
     }
 }
