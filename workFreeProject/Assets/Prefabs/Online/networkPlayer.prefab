@@ -1665,6 +1665,7 @@ MonoBehaviour:
   rankText: {fileID: 0}
   fJumpPower: 250
   Distance: 0
+  marginSpaceTAP: 50
 --- !u!114 &114414387792413474
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -61,6 +61,9 @@ public class playerController : MonoBehaviour {
 
     float resultTimer = 0;
 
+    [SerializeField]
+    float marginSpaceTAP;
+
     // Use this for initialization
     void Start () {
         velocity = Vector3.zero;
@@ -215,18 +218,18 @@ public class playerController : MonoBehaviour {
     {
         Vector3 length = Scr_ControllerManager.GetComponent<Scr_ControllerManager>().GetControllerVec();
 
-        if ( length.x > 0 )
+        if ( length.x > marginSpaceTAP)
         {
             speed += 0.04f;
         }
-        else if ( length.x < 0 )
+        else if ( length.x < -marginSpaceTAP)
         {
             speed -= 0.04f;
         }
 
         ////速度の制御はコントローラの長さ
         //コントローラーの長さ(増)
-        if (length.x > 0 && length.x < 300 )
+        if (length.x > marginSpaceTAP && length.x < 300 )
         {
             //最大速度が2.0
             if (speed > 2.0 )
@@ -254,7 +257,7 @@ public class playerController : MonoBehaviour {
             }
         }
         //////コントローラーの長さ(減)
-        if (length.x < 0 && length.x > -600)
+        if (length.x < -marginSpaceTAP && length.x > -600)
         {
             //最低速度が１1.0
             if (speed < 1.0)
