@@ -90,6 +90,16 @@ public class networkPlayerController : NetworkBehaviour
         {
             //自分以外のプレイヤーの当たり判定をoff
             GetComponent<BoxCollider>().enabled = false;
+            //Skyテクスチャオフ
+            foreach (Transform child in this.transform)
+            {
+                if( child.name == "Sky" )
+                {
+                    child.gameObject.SetActive(false);
+                }
+
+            }
+
             //名前の変更
             this.name = ("vsPlayer");
             return;

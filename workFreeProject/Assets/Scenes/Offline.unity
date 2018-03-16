@@ -408,7 +408,7 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.3
-  far clip plane: 1000
+  far clip plane: 2000
   field of view: 60
   orthographic: 0
   orthographic size: 5
@@ -565,6 +565,53 @@ Prefab:
         type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 9bda5cac54df3d04fa137c6a33c3c027, type: 2}
+  m_IsPrefabParent: 0
+--- !u!4 &765052515 stripped
+Transform:
+  m_PrefabParentObject: {fileID: 4006983960739328, guid: b72d4a221e2a01b41955b79ce72c6061,
+    type: 2}
+  m_PrefabInternal: {fileID: 458269509}
+--- !u!1001 &887486436
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 765052515}
+    m_Modifications:
+    - target: {fileID: 4068694244996368, guid: 9cfa67a1112bfaf4486012b7250b7075, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: -991.74
+      objectReference: {fileID: 0}
+    - target: {fileID: 4068694244996368, guid: 9cfa67a1112bfaf4486012b7250b7075, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: 60.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4068694244996368, guid: 9cfa67a1112bfaf4486012b7250b7075, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4068694244996368, guid: 9cfa67a1112bfaf4486012b7250b7075, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: 0.47092766
+      objectReference: {fileID: 0}
+    - target: {fileID: 4068694244996368, guid: 9cfa67a1112bfaf4486012b7250b7075, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: 0.47092766
+      objectReference: {fileID: 0}
+    - target: {fileID: 4068694244996368, guid: 9cfa67a1112bfaf4486012b7250b7075, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: -0.52747244
+      objectReference: {fileID: 0}
+    - target: {fileID: 4068694244996368, guid: 9cfa67a1112bfaf4486012b7250b7075, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 0.52747244
+      objectReference: {fileID: 0}
+    - target: {fileID: 4068694244996368, guid: 9cfa67a1112bfaf4486012b7250b7075, type: 2}
+      propertyPath: m_RootOrder
+      value: 5
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 100100000, guid: 9cfa67a1112bfaf4486012b7250b7075, type: 2}
   m_IsPrefabParent: 0
 --- !u!114 &1317503124 stripped
 MonoBehaviour:
