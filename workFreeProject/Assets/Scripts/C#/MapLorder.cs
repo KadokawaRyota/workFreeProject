@@ -43,6 +43,9 @@ public class MapLorder : MonoBehaviour
     GameObject Coin;
     [SerializeField]
     GameObject Toge;
+    [SerializeField]
+    GameObject Tree;
+
 
     GameObject Player = null;
     bool SetPlayer = false;
@@ -100,6 +103,25 @@ public class MapLorder : MonoBehaviour
                     case "N": // 普通の床
                         {
                             GameObject.Instantiate(normalBlock, Pos, Quaternion.identity , StageBlocks.transform); //使用する床プレファブ,ポジション,Rotationを決定
+
+                            int treeOn = UnityEngine.Random.Range(0, 10);
+
+                            //木の設置
+                            if (UnityEngine.Random.Range(0, 10) <= 2)
+                            {
+                                if (treeOn == 0)
+                                {
+                                    GameObject.Instantiate(Tree, Pos += new Vector3(0.0f, 0.0f, 10.0f), Quaternion.identity, StageBlocks.transform);
+                                }
+                                else if (treeOn == 1)
+                                {
+                                    GameObject.Instantiate(Tree, Pos += new Vector3(0.0f, 0.0f, 7.0f), Quaternion.identity, StageBlocks.transform);
+                                }
+                                else if (treeOn == 2)
+                                {
+                                    GameObject.Instantiate(Tree, Pos += new Vector3(0.0f, 0.0f, 13.0f), Quaternion.identity, StageBlocks.transform);
+                                }
+                            }
                             break;
                         }
                     case "S": //スタート地点
