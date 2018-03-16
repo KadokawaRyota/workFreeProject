@@ -23,6 +23,18 @@ public class resultText : MonoBehaviour {
 
         Score.text = score.ToString() + "点";
         Runk.text = runk.ToString() + "位";
+
+        if( runk == -1 )
+        {
+            //オフライン時は見えないように。
+            Runk.GetComponent<Text>().enabled = false;
+            //位置を変更
+            Score.GetComponent<RectTransform>().transform.position = Runk.GetComponent<RectTransform>().transform.position;
+        }
+        else
+        {
+            Runk.GetComponent<Text>().enabled = true;
+        }
     }
 	
 	// Update is called once per frame

@@ -165,13 +165,6 @@ public class playerController : MonoBehaviour {
                     transform.position += velocity;
                     oldPosition = transform.position;
                 }
-
-                //遷移
-                if( 3 < resultTimer )
-                {
-                    SceneManager.LoadScene("Result");
-                }
-
                 break;
             }
             default:
@@ -329,6 +322,13 @@ public class playerController : MonoBehaviour {
     public void GoalFlugSwitch()
     {
         state = PLAYER_STATE.GOAL;
+        //リザルト遷移の準備
+        GameObject.Find("resultManager").GetComponent<ResultManagerScript>().OfflinePlayerGoal(this.gameObject);
+    }
+
+    public int GetScore()
+    {
+        return Score.GetComponent<Score>().GetScore();
     }
 
 }

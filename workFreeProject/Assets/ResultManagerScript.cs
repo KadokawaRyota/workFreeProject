@@ -53,6 +53,7 @@ public class ResultManagerScript : MonoBehaviour {
 
     // Update is called once per frame
     void Update () {
+
         if (myPlayer != null && !bTimer)
         {
             if( vsPlayer != null )
@@ -86,8 +87,14 @@ public class ResultManagerScript : MonoBehaviour {
                 GameObject.Find("NetworkManager").GetComponent<NetworkManagerScript>().NetDisconnect();
                 SceneManager.LoadScene("Result");
             }
+            //オフライン用
+            else if ( timer > 3 && myPlayerRunk == -1 )
+            {
+                bTimer = false;
+                timer = 0;
+                SceneManager.LoadScene("Result");
+            }
         }
-
 	}
 
 
@@ -120,6 +127,19 @@ public class ResultManagerScript : MonoBehaviour {
 
         //スコアを格納。
         myPlayerScore = myPlayer.GetComponent<networkPlayerController>().GetScore();
+    }
+
+        //プレイヤーがゴールしたら呼び出される。
+    public void OfflinePlayerGoal( GameObject thisPlayer )
+    {
+        //呼び出し元の自分のプレイヤーを保持。
+        myPlayer = thisPlayer;
+
+        //呼び出し元の自分のプレイヤーの順位を表示しないようにする。
+        myPlayerRunk = -1;
+
+        //スコアを格納。
+        myPlayerScore = myPlayer.GetComponent<playerController>().GetScore();
     }
 
 
