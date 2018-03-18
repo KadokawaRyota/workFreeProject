@@ -83,6 +83,9 @@ public class networkPlayerController : NetworkBehaviour
     [SerializeField]
     float marginSpaceTAP;
 
+    [SerializeField]
+    ParticleSystem smog;
+
     // Use this for initialization
     public void Start()
     {
@@ -160,6 +163,9 @@ public class networkPlayerController : NetworkBehaviour
         Button button = jumpButton.gameObject.GetComponent<Button>();
         button.onClick.RemoveAllListeners();
         button.onClick.AddListener(  () => playerJump(true) );
+
+        //エファクト
+        smog.Stop();
     }
 
     // Update is called once per frame
@@ -189,6 +195,7 @@ public class networkPlayerController : NetworkBehaviour
                     //スタート時間になったので状態を走る状態にする。
                     if (hostTimerScript.GetTime() >= startWaitTime)
                     {
+                        smog.Play();
                         time = 0;
                         state = PLAYER_STATE.RUN;
                         GetComponent<Animator>().SetBool("bRun", true);
@@ -283,6 +290,7 @@ public class networkPlayerController : NetworkBehaviour
                         velocity = new Vector3(speed / 60 * 4, velocity.y, 0);
                         transform.position += velocity;
                         oldPosition = transform.position;
+                        smog.Stop();
                     }
 
                     break;
@@ -314,6 +322,7 @@ public class networkPlayerController : NetworkBehaviour
 
             //ジャンプフラグをtrueに。
             bJump = true;
+            smog.Stop();
 
             return;
         }
@@ -339,6 +348,7 @@ public class networkPlayerController : NetworkBehaviour
         //着地処理用。
         else if( !jump )
         {
+            smog.Stop();
             bJump = false;
             bDoubleJump = false;
             return;
