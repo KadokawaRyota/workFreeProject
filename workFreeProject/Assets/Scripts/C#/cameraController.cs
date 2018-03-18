@@ -25,5 +25,8 @@ public class cameraController : MonoBehaviour {
         transform.LookAt(posRobject.transform.position);
         //カメラのポジションを入れる。
         transform.position = posRobject.transform.position + Distance;
+
+        //たされたりマイナスしてるのはとりあえず微調整したため。
+        transform.position = new Vector3( transform.position.x - 1.5f , transform.position.y , transform.position.z + 2 );
     }
 }

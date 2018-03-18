@@ -64,6 +64,11 @@ public class playerController : MonoBehaviour {
     [SerializeField]
     float marginSpaceTAP;
 
+
+    //エフェクト
+    [SerializeField]
+    ParticleSystem smog;        //走る時の煙
+
     // Use this for initialization
     void Start () {
         velocity = Vector3.zero;
@@ -87,6 +92,9 @@ public class playerController : MonoBehaviour {
         //テキストの変更
         speedText.text = "Speed: " + speed.ToString();
 
+
+        //エフェクト
+        smog.Stop();
     }
 	
 	// Update is called once per frame
@@ -103,6 +111,7 @@ public class playerController : MonoBehaviour {
                     time = 0;
                     state = PLAYER_STATE.RUN;
                     GetComponent<Animator>().SetBool("bRun",true);
+                    smog.Play();    //走る時の煙エフェクトON
                 }
                 break;
             }
@@ -189,6 +198,7 @@ public class playerController : MonoBehaviour {
             //着地処理の時だけ二段ジャンプをfalseに。
             if ( !jump )
             bDoubleJump = false;
+            smog.Play();    //走る時の煙エフェクトOFF
         }
         //二段ジャンプ（ジャンプ中にジャンプ処理が呼ばれた。かつまだ二段ジャンプしていない）
         else if (bJump && jump && bDoubleJump == false && !bHitWall )
@@ -211,6 +221,8 @@ public class playerController : MonoBehaviour {
             if ( state == PLAYER_STATE.RUN )
             GetComponent<Rigidbody>().AddForce(new Vector3(0.0f, fJumpPower, 0.0f), ForceMode.Impulse);
             gameObject.layer = LayerMask.NameToLayer("JumpPlayer");
+
+            smog.Stop();    //走る時の煙エフェクトOFF
         }
     }
 
