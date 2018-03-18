@@ -87,6 +87,12 @@ public class networkPlayerController : NetworkBehaviour
     [SerializeField]
     ParticleSystem smog;
 
+    //モーション
+    Animator anim;
+
+    //
+    bool bAddBotton = false;
+
     // Use this for initialization
     public void Start()
     {
@@ -167,20 +173,29 @@ public class networkPlayerController : NetworkBehaviour
         button.onClick.RemoveAllListeners();
         button.onClick.AddListener(  () => playerJump(true) );*/
 
-
-        //ボタンのイベントトリガーに割当
-        EventTrigger currentTrigger = jumpButton.AddComponent<EventTrigger>();
-        currentTrigger.triggers = new List<EventTrigger.Entry>();
-        //↑ここでAddComponentしているので一応、初期化しています。
-
-        EventTrigger.Entry entry = new EventTrigger.Entry();
-        entry.eventID = EventTriggerType.PointerDown; //PointerClickの部分は追加したいEventによって変更してね
-        entry.callback.AddListener((x) => playerJump(true));  //ラムダ式の右側は追加するメソッドです。
-
-        currentTrigger.triggers.Add(entry);
-
         //エファクト
         smog.Stop();
+
+        anim = GetComponent<Animator>();
+        anim.speed = 1.0f;
+
+        if( !bAddBotton )
+        {
+            //ボタン登録
+            //ボタンのイベントトリガーに割当
+            EventTrigger currentTrigger = jumpButton.AddComponent<EventTrigger>();
+            currentTrigger.triggers = new List<EventTrigger.Entry>();
+            //↑ここでAddComponentしているので一応、初期化しています。
+
+            EventTrigger.Entry entry = new EventTrigger.Entry();
+            entry.eventID = EventTriggerType.PointerDown; //PointerClickの部分は追加したいEventによって変更してね
+            entry.callback.AddListener((x) => playerJump(true));  //ラムダ式の右側は追加するメソッドです。
+
+            currentTrigger.triggers.Add(entry);
+
+            bAddBotton = true;
+        }
+
     }
 
     // Update is called once per frame
@@ -390,6 +405,20 @@ public class networkPlayerController : NetworkBehaviour
             speed -= 0.04f;
         }
 
+        //アニメーション用
+        if (0 <= speed && speed < 2)
+        {
+            anim.speed = 1.0f;
+        }
+        else if (2 <= speed && speed < 3)
+        {
+            anim.speed = 1.5f;
+        }
+        else
+        {
+            anim.speed = 2.0f;
+        }
+
         ////速度の制御はコントローラの長さ
         //コントローラーの長さ(増)
         if (length.x > marginSpaceTAP && length.x < 300)
@@ -452,22 +481,27 @@ public class networkPlayerController : NetworkBehaviour
 
     public void HitWall(bool hitWall)
     {
+        if (!isLocalPlayer) return;
         bHitWall = hitWall;
     }
 
     public void HitToge()
     {
+        if (!isLocalPlayer) return;
         speed = 1.0f;
     }
 
     public void HitItem()
     {
+        if (!isLocalPlayer) return;
         Score.GetComponent<Score>().ScoreAdd(100);
     }
 
 
     void OnTriggerEnter(Collider col)
     {
+        if (!isLocalPlayer) return;
+
         if (col.gameObject.tag == "Coin")
         {
             col.gameObject.GetComponent<SphereCollider>().enabled = false;
@@ -495,6 +529,8 @@ public class networkPlayerController : NetworkBehaviour
     
     public void GoalFlugSwitch()
     {
+        if (!isLocalPlayer) return;
+
         //自分の状態をゴールに。
         state = PLAYER_STATE.GOAL;
 

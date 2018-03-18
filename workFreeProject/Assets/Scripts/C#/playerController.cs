@@ -69,6 +69,9 @@ public class playerController : MonoBehaviour {
     [SerializeField]
     ParticleSystem smog;        //走る時の煙
 
+    //モーション
+    Animator anim;
+
     // Use this for initialization
     void Start () {
         velocity = Vector3.zero;
@@ -95,6 +98,9 @@ public class playerController : MonoBehaviour {
 
         //エフェクト
         smog.Stop();
+
+        anim = GetComponent<Animator>();
+        anim.speed = 1.0f;
     }
 	
 	// Update is called once per frame
@@ -237,6 +243,20 @@ public class playerController : MonoBehaviour {
         else if ( length.x < -marginSpaceTAP)
         {
             speed -= 0.04f;
+        }
+
+        //アニメーション用
+        if ( 0 <= speed && speed < 2)
+        {
+            anim.speed = 1.0f;
+        }
+        else if( 2 <= speed && speed < 3)
+        {
+            anim.speed = 1.5f;
+        }
+        else
+        {
+            anim.speed = 2.0f;
         }
 
         ////速度の制御はコントローラの長さ
