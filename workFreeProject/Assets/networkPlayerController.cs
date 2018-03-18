@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 //スケールのサイズ1を1mとして扱う。
 //成人男性の歩幅が75cm、2歩で約1秒なのでspeedの変数は1.5m/sを基準とする。(歩行)走る速度は約4倍になるそうなので4をかける。
@@ -160,9 +161,23 @@ public class networkPlayerController : NetworkBehaviour
 
         //ボタンに自分自身のジャンプを割り当てる。
         GameObject jumpButton = GameObject.Find("Canvas/JumpButton");
-        Button button = jumpButton.gameObject.GetComponent<Button>();
+
+        //ボタンに直接割り当てる場合。（イベントトリガーに設定したらいらなくなった。）
+        /*Button button = jumpButton.gameObject.GetComponent<Button>();
         button.onClick.RemoveAllListeners();
-        button.onClick.AddListener(  () => playerJump(true) );
+        button.onClick.AddListener(  () => playerJump(true) );*/
+
+
+        //ボタンのイベントトリガーに割当
+        EventTrigger currentTrigger = jumpButton.AddComponent<EventTrigger>();
+        currentTrigger.triggers = new List<EventTrigger.Entry>();
+        //↑ここでAddComponentしているので一応、初期化しています。
+
+        EventTrigger.Entry entry = new EventTrigger.Entry();
+        entry.eventID = EventTriggerType.PointerDown; //PointerClickの部分は追加したいEventによって変更してね
+        entry.callback.AddListener((x) => playerJump(true));  //ラムダ式の右側は追加するメソッドです。
+
+        currentTrigger.triggers.Add(entry);
 
         //エファクト
         smog.Stop();
