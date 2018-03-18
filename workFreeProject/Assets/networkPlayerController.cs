@@ -440,6 +440,11 @@ public class networkPlayerController : NetworkBehaviour
         bHitWall = hitWall;
     }
 
+    public void HitToge()
+    {
+        speed = 1.0f;
+    }
+
     public void HitItem()
     {
         Score.GetComponent<Score>().ScoreAdd(100);
@@ -468,6 +473,7 @@ public class networkPlayerController : NetworkBehaviour
         {
             state = PLAYER_STATE.RECOVERY;
             transform.position = new Vector3(oldBlock2.transform.position.x, oldBlock2.transform.position.y + 1.0f, oldBlock2.transform.position.z);
+            speed = 1.0f;
         }
     }
 

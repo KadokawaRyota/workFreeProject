@@ -32,6 +32,18 @@ public class WallCheck : MonoBehaviour {
 
             transform.parent.GetComponent<Rigidbody>().AddForce(-300.0f, 0.0f, 0.0f, ForceMode.Impulse);
         }
+        if (col.tag == "Toge")
+        {
+            if (SceneManager.GetActiveScene().name == "Online")
+            {
+                transform.parent.GetComponent<networkPlayerController>().HitToge();
+            }
+            else if (SceneManager.GetActiveScene().name == "Offline")
+            {
+                transform.parent.GetComponent<playerController>().HitToge();
+            }
+        }
+
     }
     void OnTriggerExit(Collider col)
     {
