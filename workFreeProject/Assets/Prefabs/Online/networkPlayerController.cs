@@ -87,10 +87,14 @@ public class networkPlayerController : NetworkBehaviour
     [SerializeField]
     ParticleSystem smog;
 
+    //スタートUI
+    [SerializeField]
+    GameObject startUi;
+
+
     //モーション
     Animator anim;
 
-    //
     bool bAddBotton = false;
 
     //SE

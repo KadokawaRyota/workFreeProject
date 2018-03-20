@@ -75,6 +75,13 @@ public class playerController : MonoBehaviour {
     //SE
     SEManager se;
 
+    [SerializeField]
+    GameObject startUi;
+    Renderer startRenderer;
+
+    [SerializeField]
+    GameObject goalUi;
+
     // Use this for initialization
     void Start () {
         velocity = Vector3.zero;
@@ -98,7 +105,6 @@ public class playerController : MonoBehaviour {
         //テキストの変更
         speedText.text = "Speed: " + speed.ToString();
 
-
         //エフェクト
         smog.Stop();
 
@@ -107,6 +113,8 @@ public class playerController : MonoBehaviour {
 
         //SE
         se = GameObject.Find("SEManager").GetComponent<SEManager>();
+
+        startRenderer = startUi.GetComponent<Renderer>();
     }
 	
 	// Update is called once per frame
@@ -117,13 +125,38 @@ public class playerController : MonoBehaviour {
             {
                 //スタートするまでの待機
                 time += Time.deltaTime;
+
+
+                //スタートする時のUI
                 //スタート時間になったので状態を走る状態にする。
-                if( time >= startWaitTime )
+                if (time >= startWaitTime)
                 {
+                    startRenderer.enabled = false;
                     time = 0;
                     state = PLAYER_STATE.RUN;
-                    GetComponent<Animator>().SetBool("bRun",true);
+                    GetComponent<Animator>().SetBool("bRun", true);
                     smog.Play();    //走る時の煙エフェクトON
+                }
+                else if (time >= startWaitTime - 1) //スタートまで1秒前
+                {
+                    startUi.transform.localScale = new Vector3( 1 , 1 , 0.5f );
+                    startRenderer.sharedMaterial.SetTextureOffset("_MainTex", new Vector2( 0 , 0 ));
+                }
+                else if ( time >= startWaitTime - 2 ) //スタートまで2秒前
+                {
+                    startUi.transform.localScale = new Vector3(time / 10 + 0.5f, startUi.transform.localScale.y, time / 10 + 0.5f);
+                    startRenderer.sharedMaterial.SetTextureOffset("_MainTex", new Vector2( 0 , -0.25f ));
+                }
+                else if( time >= startWaitTime - 3 )　//スタートまで3秒前
+                {
+                    startUi.transform.localScale = new Vector3(time / 10 + 0.5f, startUi.transform.localScale.y, time / 10 + 0.5f);
+                    startRenderer.sharedMaterial.SetTextureOffset("_MainTex", new Vector2(0, -0.50f));
+                }
+                else if (time >= startWaitTime - 4 )　//スタートまで4秒前
+                {
+                    startRenderer.enabled = true;
+                    startUi.transform.localScale = new Vector3( time / 10 + 0.5f, startUi.transform.localScale.y , time / 10 + 0.5f);
+                    startRenderer.sharedMaterial.SetTextureOffset("_MainTex", new Vector2(0, -0.75f));
                 }
                 break;
             }
@@ -372,6 +405,7 @@ public class playerController : MonoBehaviour {
 
     public void GoalFlugSwitch()
     {
+        goalUi.GetComponent< Renderer >().enabled = true;
         state = PLAYER_STATE.GOAL;
         //リザルト遷移の準備
         GameObject.Find("resultManager").GetComponent<ResultManagerScript>().OfflinePlayerGoal(this.gameObject);
