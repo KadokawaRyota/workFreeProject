@@ -93,6 +93,10 @@ public class networkPlayerController : NetworkBehaviour
     //
     bool bAddBotton = false;
 
+    //SE
+    AudioSource seSource;
+    SEManager se;
+
     // Use this for initialization
     public void Start()
     {
@@ -179,7 +183,11 @@ public class networkPlayerController : NetworkBehaviour
         anim = GetComponent<Animator>();
         anim.speed = 1.0f;
 
-        if( !bAddBotton )
+        //SE
+        seSource = GameObject.Find("SEManager").GetComponent<AudioSource>();
+        se = GameObject.Find("SEManager").GetComponent<SEManager>();
+
+        if ( !bAddBotton )
         {
             //ボタン登録
             //ボタンのイベントトリガーに割当
@@ -344,6 +352,7 @@ public class networkPlayerController : NetworkBehaviour
         //ジャンプ処理。
         if ( !bJump && jump )
         {
+            se.SePlay("jump");
             GetComponent<networkPlayerController>().HitWall(false);
             GetComponent<Rigidbody>().AddForce(new Vector3(0.0f, fJumpPower, 0.0f), ForceMode.Impulse);
 
@@ -361,6 +370,7 @@ public class networkPlayerController : NetworkBehaviour
         {
             if( !bDoubleJump )
             {
+                se.SePlay("jump");
                 //空中に地面を作ってジャンプする感じにするため、一旦初期化
                 GetComponent<Rigidbody>().velocity = Vector3.zero;
                 GetComponent<Rigidbody>().AddForce(new Vector3(0.0f, fJumpPower, 0.0f), ForceMode.Impulse);
@@ -482,6 +492,7 @@ public class networkPlayerController : NetworkBehaviour
     public void HitWall(bool hitWall)
     {
         if (!isLocalPlayer) return;
+        se.SePlay("wall");
         bHitWall = hitWall;
     }
 
@@ -504,6 +515,7 @@ public class networkPlayerController : NetworkBehaviour
 
         if (col.gameObject.tag == "Coin")
         {
+            se.SePlay("coin");
             col.gameObject.GetComponent<SphereCollider>().enabled = false;
             Destroy(col.gameObject);
             HitItem();

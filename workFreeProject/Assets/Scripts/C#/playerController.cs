@@ -72,6 +72,9 @@ public class playerController : MonoBehaviour {
     //モーション
     Animator anim;
 
+    //SE
+    SEManager se;
+
     // Use this for initialization
     void Start () {
         velocity = Vector3.zero;
@@ -101,6 +104,9 @@ public class playerController : MonoBehaviour {
 
         anim = GetComponent<Animator>();
         anim.speed = 1.0f;
+
+        //SE
+        se = GameObject.Find("SEManager").GetComponent<SEManager>();
     }
 	
 	// Update is called once per frame
@@ -209,6 +215,7 @@ public class playerController : MonoBehaviour {
         //二段ジャンプ（ジャンプ中にジャンプ処理が呼ばれた。かつまだ二段ジャンプしていない）
         else if (bJump && jump && bDoubleJump == false && !bHitWall )
         {
+            se.SePlay("jump");
             bDoubleJump = true;
             GetComponent<Rigidbody>().velocity = Vector3.zero;
             GetComponent<Rigidbody>().AddForce(new Vector3(0.0f, fJumpPower, 0.0f), ForceMode.Impulse);
@@ -223,6 +230,7 @@ public class playerController : MonoBehaviour {
         //ジャンプ処理。
         if ( bJump )
         {
+            se.SePlay("jump");
             GetComponent<playerController>().HitWall(false);
             if ( state == PLAYER_STATE.RUN )
             GetComponent<Rigidbody>().AddForce(new Vector3(0.0f, fJumpPower, 0.0f), ForceMode.Impulse);
@@ -320,6 +328,7 @@ public class playerController : MonoBehaviour {
 
     public void HitWall( bool hitWall )
     {
+        se.SePlay("wall");
         bHitWall = hitWall;
     }
 
@@ -338,6 +347,7 @@ public class playerController : MonoBehaviour {
     {
         if( col.gameObject.tag == "Coin" )
         {
+            se.SePlay("coin");
             col.gameObject.GetComponent<SphereCollider>().enabled = false;
             Destroy(col.gameObject);
             HitItem();
