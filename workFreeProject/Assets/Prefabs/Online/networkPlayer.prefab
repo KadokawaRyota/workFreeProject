@@ -1791,7 +1791,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   camera: {fileID: 0}
-  startWaitTime: 2
+  startWaitTime: 6
   speed: 1.5
   speedMin: 1
   speedText: {fileID: 0}
@@ -1800,6 +1800,8 @@ MonoBehaviour:
   Distance: 0
   marginSpaceTAP: 50
   smog: {fileID: 198118226095966032}
+  startUi: {fileID: 0}
+  goalUi: {fileID: 0}
 --- !u!114 &114045924834853342
 MonoBehaviour:
   m_ObjectHideFlags: 1

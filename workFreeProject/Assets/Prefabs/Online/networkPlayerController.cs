@@ -90,6 +90,14 @@ public class networkPlayerController : NetworkBehaviour
     //スタートUI
     [SerializeField]
     GameObject startUi;
+    Renderer startRenderer;
+
+    //ゴールUI
+    [SerializeField]
+    GameObject goalUi;
+
+    //ゴールポジション
+    Vector3 goalPos;
 
 
     //モーション
@@ -122,6 +130,12 @@ public class networkPlayerController : NetworkBehaviour
             this.name = ("vsPlayer");
             return;
         }
+
+        //スタートとゴールのUI取得
+        startUi = GameObject.Find("Main Camera/startUI");
+        startRenderer = startUi.GetComponent<Renderer>();
+        goalUi = GameObject.Find("Main Camera/goalUi");
+        goalUi.GetComponent<Renderer>().enabled = false;
 
         resultTimer = 0;
         Distance = 0.0f;
@@ -237,10 +251,34 @@ public class networkPlayerController : NetworkBehaviour
                     //スタート時間になったので状態を走る状態にする。
                     if (hostTimerScript.GetTime() >= startWaitTime)
                     {
+                        startRenderer.enabled = false;
                         smog.Play();
                         time = 0;
                         state = PLAYER_STATE.RUN;
                         GetComponent<Animator>().SetBool("bRun", true);
+                    }
+                    //スタートする時のUI
+                    //スタート時間になったので状態を走る状態にする。
+                    else if (hostTimerScript.GetTime() >= startWaitTime - 1) //スタートまで1秒前
+                    {
+                        startUi.transform.localScale = new Vector3(1, 1, 0.5f);
+                        startRenderer.sharedMaterial.SetTextureOffset("_MainTex", new Vector2(0, 0));
+                    }
+                    else if (hostTimerScript.GetTime() >= startWaitTime - 2) //スタートまで2秒前
+                    {
+                        startUi.transform.localScale = new Vector3(time / 10 + 0.5f, startUi.transform.localScale.y, time / 10 + 0.5f);
+                        startRenderer.sharedMaterial.SetTextureOffset("_MainTex", new Vector2(0, -0.25f));
+                    }
+                    else if (hostTimerScript.GetTime() >= startWaitTime - 3) //スタートまで3秒前
+                    {
+                        startUi.transform.localScale = new Vector3(time / 10 + 0.5f, startUi.transform.localScale.y, time / 10 + 0.5f);
+                        startRenderer.sharedMaterial.SetTextureOffset("_MainTex", new Vector2(0, -0.50f));
+                    }
+                    else if (hostTimerScript.GetTime() >= startWaitTime - 4) //スタートまで4秒前
+                    {
+                        startRenderer.enabled = true;
+                        startUi.transform.localScale = new Vector3(time / 10 + 0.5f, startUi.transform.localScale.y, time / 10 + 0.5f);
+                        startRenderer.sharedMaterial.SetTextureOffset("_MainTex", new Vector2(0, -0.75f));
                     }
                     break;
                 }
@@ -297,6 +335,8 @@ public class networkPlayerController : NetworkBehaviour
                 {
                     transform.position += velocity;
                     oldPosition = transform.position;
+                    //ゴールする直前のポジションを記憶するため。(ゴールした瞬間にこのcaseを通らないため。)
+                    goalPos = transform.position;
                     break;
                 }
             case (PLAYER_STATE.RECOVERY):
@@ -315,24 +355,29 @@ public class networkPlayerController : NetworkBehaviour
                     resultTimer += Time.deltaTime;
 
                     //順位によってゴールした後に立つ位置を変える。
-                    if (rank == 1)
-                    {
-                        speed = 3.0f;
-                    }
-                    else
-                    {
-                        speed = 1.0f;
-                    }
-
                     //ゴールした後も少しだけ右へ進む。
                     //スピードを落とすまで。
-                    if (0.2 > resultTimer)
+                    if (rank == 1)
                     {
-                        //横の移動量決定
-                        velocity = new Vector3(speed / 60 * 4, velocity.y, 0);
-                        transform.position += velocity;
-                        oldPosition = transform.position;
-                        smog.Stop();
+                        if (transform.position.x < goalPos.x + 4)
+                        {
+                            //横の移動量決定
+                            velocity = new Vector3(speed / 60 * 4, velocity.y, 0);
+                            transform.position += velocity;
+                            oldPosition = transform.position;
+                            smog.Stop();
+                        }
+                    }
+                    else if (rank == 2)
+                    {
+                        if (transform.position.x < goalPos.x + 2)
+                        {
+                            //横の移動量決定
+                            velocity = new Vector3(speed / 60 * 4, velocity.y, 0);
+                            transform.position += velocity;
+                            oldPosition = transform.position;
+                            smog.Stop();
+                        }
                     }
 
                     break;
@@ -549,6 +594,8 @@ public class networkPlayerController : NetworkBehaviour
 
         //自分の状態をゴールに。
         state = PLAYER_STATE.GOAL;
+
+        goalUi.GetComponent<Renderer>().enabled = true;
 
         //リザルト遷移の準備
         GameObject.Find("resultManager").GetComponent<ResultManagerScript>().PlayerGoal( this.gameObject , isServer);
