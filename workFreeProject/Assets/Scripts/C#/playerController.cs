@@ -82,6 +82,9 @@ public class playerController : MonoBehaviour {
     [SerializeField]
     GameObject goalUi;
 
+    //音が鳴ったか確かめる用；
+    int seCheckTimeOld;
+
     // Use this for initialization
     void Start () {
         velocity = Vector3.zero;
@@ -141,23 +144,40 @@ public class playerController : MonoBehaviour {
                 {
                     startUi.transform.localScale = new Vector3( 1 , 1 , 0.5f );
                     startRenderer.sharedMaterial.SetTextureOffset("_MainTex", new Vector2( 0 , 0 ));
+                    if ((int)time != seCheckTimeOld)
+                    {
+                        se.SePlay("pon");
+                    }
                 }
                 else if ( time >= startWaitTime - 2 ) //スタートまで2秒前
                 {
                     startUi.transform.localScale = new Vector3(time / 10 + 0.5f, startUi.transform.localScale.y, time / 10 + 0.5f);
                     startRenderer.sharedMaterial.SetTextureOffset("_MainTex", new Vector2( 0 , -0.25f ));
+                    if ((int)time != seCheckTimeOld)
+                    {
+                        se.SePlay("pi");
+                    }
                 }
                 else if( time >= startWaitTime - 3 )　//スタートまで3秒前
                 {
                     startUi.transform.localScale = new Vector3(time / 10 + 0.5f, startUi.transform.localScale.y, time / 10 + 0.5f);
                     startRenderer.sharedMaterial.SetTextureOffset("_MainTex", new Vector2(0, -0.50f));
+                    if ((int)time != seCheckTimeOld)
+                    {
+                        se.SePlay("pi");
+                    }
                 }
                 else if (time >= startWaitTime - 4 )　//スタートまで4秒前
                 {
                     startRenderer.enabled = true;
                     startUi.transform.localScale = new Vector3( time / 10 + 0.5f, startUi.transform.localScale.y , time / 10 + 0.5f);
                     startRenderer.sharedMaterial.SetTextureOffset("_MainTex", new Vector2(0, -0.75f));
+                    if ((int)time != seCheckTimeOld)
+                    {
+                        se.SePlay("pi");
+                    }
                 }
+                seCheckTimeOld = (int)time;
                 break;
             }
             case (PLAYER_STATE.RUN):

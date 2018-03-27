@@ -36,12 +36,17 @@ public class TitleScript : MonoBehaviour
     public void OnlineSceneChangeHost()
     {
         GameObject.Find("NetworkSetter").GetComponent<NetworkSetter>().NetSettingData( "host" , GameObject.Find("Canvas/InputFieldIp").GetComponent<InputField>().text ,"7777" );
+
+        //シーン移行寸前にinputFieldにあるipアドレスを保持する。
+        GameObject.Find("NetworkSetter").GetComponent<NetworkSetter>().SetUseNetworkIp( GameObject.Find("Canvas/InputFieldIp").GetComponent<InputField>().text );
         SceneManager.LoadScene("Online");
     }
 
     public void OnlineSceneChangeClient()
     {
         GameObject.Find("NetworkSetter").GetComponent<NetworkSetter>().NetSettingData( "client" , GameObject.Find("Canvas/InputFieldIp").GetComponent<InputField>().text ,"7777" );
+        //シーン移行寸前にinputFieldにあるipアドレスを保持する。
+        GameObject.Find("NetworkSetter").GetComponent<NetworkSetter>().SetUseNetworkIp(GameObject.Find("Canvas/InputFieldIp").GetComponent<InputField>().text);
         SceneManager.LoadScene("Online");
     }
 

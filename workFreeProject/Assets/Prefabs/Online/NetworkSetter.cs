@@ -12,6 +12,8 @@ public class NetworkSetter : MonoBehaviour
     [SerializeField]
     static string NetworkPort;            //ポート番号
 
+    static string useNetworkPort = null;
+
     static public NetworkSetter instance;
 
     void Start()
@@ -45,11 +47,23 @@ public class NetworkSetter : MonoBehaviour
         if( NetworkIp == null )
         {
             NetworkIp = "-1";
+            return NetworkIp;
         }
+
         return NetworkIp;
     }
     public string GetState()
     {
         return NetworkState;
+    }
+
+    public void SetUseNetworkIp( string ip )
+    {
+        useNetworkPort = ip;
+    }
+
+    public string GetUseNetworkIp()
+    {
+        return useNetworkPort;
     }
 }

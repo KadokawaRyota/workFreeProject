@@ -11,5 +11,9 @@ public class GetIpStart : MonoBehaviour {
 	void Start () {
         TitleScript = GameObject.Find("TitleScript");
         GetComponent<InputField>().text = TitleScript.GetComponent<TitleScript>().GetIp();
+        if( GameObject.Find("NetworkSetter").GetComponent<NetworkSetter>().GetUseNetworkIp() != null )
+        {
+            GetComponent<InputField>().text = GameObject.Find("NetworkSetter").GetComponent<NetworkSetter>().GetUseNetworkIp();
+        }
     }
 }

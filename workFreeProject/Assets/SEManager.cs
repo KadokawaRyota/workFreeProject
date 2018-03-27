@@ -10,6 +10,10 @@ public class SEManager : MonoBehaviour {
     AudioClip coin;
     [SerializeField]
     AudioClip wall;
+    [SerializeField]
+    AudioClip pi;
+    [SerializeField]
+    AudioClip pon;
 
     AudioSource AudioSorce;
 
@@ -20,18 +24,6 @@ public class SEManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if (Input.GetKeyDown(KeyCode.J))
-        {
-            SePlay("jump");
-        }
-        if (Input.GetKeyDown(KeyCode.K))
-        {
-            SePlay("coin");
-        }
-        if (Input.GetKeyDown(KeyCode.L))
-        {
-            SePlay("wall");
-        }
     }
 
     public void SePlay( string seName )
@@ -53,6 +45,16 @@ public class SEManager : MonoBehaviour {
                 AudioSorce.PlayOneShot(wall);
                 break;
             }
+            case "pi":
+                {
+                    AudioSorce.PlayOneShot(pi);
+                    break;
+                }
+            case "pon":
+                {
+                    AudioSorce.PlayOneShot(pon);
+                    break;
+                }
             default:
             {
                 Debug.Log("エラー：引数に"+ seName+"が渡されましたが、SEManagerの変数名に" + seName +"が用意されていないか、このメソッド中のcaseに引数名のcaseが含まれておりません。");

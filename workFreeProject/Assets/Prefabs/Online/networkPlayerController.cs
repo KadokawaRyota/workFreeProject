@@ -109,6 +109,9 @@ public class networkPlayerController : NetworkBehaviour
     AudioSource seSource;
     SEManager se;
 
+    //音が鳴ったか確かめる用；
+    int seCheckTimeOld;
+
     // Use this for initialization
     public void Start()
     {
@@ -116,6 +119,7 @@ public class networkPlayerController : NetworkBehaviour
         {
             //自分以外のプレイヤーの当たり判定をoff
             GetComponent<BoxCollider>().enabled = false;
+            smog.Stop();
             //Skyテクスチャオフ
             foreach (Transform child in this.transform)
             {
@@ -195,7 +199,7 @@ public class networkPlayerController : NetworkBehaviour
         button.onClick.RemoveAllListeners();
         button.onClick.AddListener(  () => playerJump(true) );*/
 
-        //エファクト
+        //エフェクト
         smog.Stop();
 
         anim = GetComponent<Animator>();
@@ -232,7 +236,7 @@ public class networkPlayerController : NetworkBehaviour
         ////順位判定
         if( Player2 == null )
         {
-            Player2 = GameObject.Find("networkPlayer(Clone)");
+            Player2 = GameObject.Find("vsPlayer");
         }
         else
         {
@@ -263,23 +267,42 @@ public class networkPlayerController : NetworkBehaviour
                     {
                         startUi.transform.localScale = new Vector3(1, 1, 0.5f);
                         startRenderer.sharedMaterial.SetTextureOffset("_MainTex", new Vector2(0, 0));
+                        if ((int)time != seCheckTimeOld)
+                        {
+                            se.SePlay("pon");
+                        }
                     }
                     else if (hostTimerScript.GetTime() >= startWaitTime - 2) //スタートまで2秒前
                     {
                         startUi.transform.localScale = new Vector3(time / 10 + 0.5f, startUi.transform.localScale.y, time / 10 + 0.5f);
                         startRenderer.sharedMaterial.SetTextureOffset("_MainTex", new Vector2(0, -0.25f));
+                        if ((int)time != seCheckTimeOld)
+                        {
+                            se.SePlay("pi");
+                        }
                     }
                     else if (hostTimerScript.GetTime() >= startWaitTime - 3) //スタートまで3秒前
                     {
                         startUi.transform.localScale = new Vector3(time / 10 + 0.5f, startUi.transform.localScale.y, time / 10 + 0.5f);
                         startRenderer.sharedMaterial.SetTextureOffset("_MainTex", new Vector2(0, -0.50f));
+                        if ((int)time != seCheckTimeOld)
+                        {
+                            se.SePlay("pi");
+                        }
                     }
                     else if (hostTimerScript.GetTime() >= startWaitTime - 4) //スタートまで4秒前
                     {
                         startRenderer.enabled = true;
                         startUi.transform.localScale = new Vector3(time / 10 + 0.5f, startUi.transform.localScale.y, time / 10 + 0.5f);
                         startRenderer.sharedMaterial.SetTextureOffset("_MainTex", new Vector2(0, -0.75f));
+                        if ((int)time != seCheckTimeOld)
+                        {
+                            se.SePlay("pi");
+                        }
                     }
+
+                    seCheckTimeOld = (int)time;
+
                     break;
                 }
             case (PLAYER_STATE.RUN):
@@ -437,7 +460,7 @@ public class networkPlayerController : NetworkBehaviour
         //着地処理用。
         else if( !jump )
         {
-            smog.Stop();
+            smog.Play();
             bJump = false;
             bDoubleJump = false;
             return;
