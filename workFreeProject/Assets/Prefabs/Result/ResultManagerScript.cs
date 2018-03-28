@@ -85,6 +85,7 @@ public class ResultManagerScript : MonoBehaviour {
                 timer = 0;
                 //ネットワーク終了処理。
                 GameObject.Find("NetworkManager").GetComponent<NetworkManagerScript>().NetDisconnect();
+                myPlayerhost = false;
                 SceneManager.LoadScene("Result");
             }
             //オフライン用
